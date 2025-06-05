@@ -45,14 +45,14 @@ const updateTwSafelistFile = (filePath: string, filteredTwSafelist: Array<string
       return;
     }
 
-    const updatedTwSafelist = data.replace(/(var twSafelist =)[\s\S]*?(;)/, `$1 ${JSON.stringify(filteredTwSafelist, null, 4)}$2`);
+    const updatedTwSafelist = data.replace(/(const twSafelist =)[\s\S]*?(;)/, `$1 ${JSON.stringify(filteredTwSafelist, null, 4)}$2`);
 
     fs.writeFile(filePath, updatedTwSafelist, "utf8", (err) => {
       if (err) {
         console.error("Error writing updated twSafelist:", err);
         return;
       }
-      console.log(chalk.greenBright("Theme Tree-Shake Completed!"));
+      console.log(chalk.greenBright("tailwind-tree compile completed!"));
     });
   });
 };

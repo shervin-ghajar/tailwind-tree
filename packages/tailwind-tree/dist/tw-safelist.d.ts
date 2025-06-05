@@ -1,1 +1,3 @@
-export declare const twSafelist: never[];
+declare const twSafelist: never[];
+
+export { twSafelist };

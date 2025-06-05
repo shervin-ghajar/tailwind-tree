@@ -2,31 +2,40 @@ import typescript from "@rollup/plugin-typescript";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import dts from "rollup-plugin-dts";
+import del from "rollup-plugin-delete";
 
 const input = "src/index.ts";
+const safelistInput = "src/tw-safelist.ts";
 
 export default [
+  // 1. Main bundle
   {
-    input,
+    input: [input, safelistInput],
     output: [
       {
-        file: "dist/index.cjs",
-        format: "cjs",
-        sourcemap: true,
-      },
-      {
-        file: "dist/index.mjs",
+        dir: "dist",
         format: "esm",
-        sourcemap: true,
+        sourcemap: false,
+        entryFileNames: "[name].js",
       },
     ],
-    external: [], // Mark dependencies you don’t want bundled here
-    plugins: [resolve(), commonjs(), typescript({ tsconfig: "./tsconfig.json" })],
+    external: [], // Add externals if needed
+    plugins: [del({ targets: "dist" }), resolve(), commonjs(), typescript({ tsconfig: "./tsconfig.json" })],
   },
+
+  // 2. Type declarations
   {
     input,
     output: {
       file: "dist/index.d.ts",
+      format: "es",
+    },
+    plugins: [dts()],
+  },
+  {
+    input: safelistInput,
+    output: {
+      file: "dist/tw-safelist.d.ts",
       format: "es",
     },
     plugins: [dts()],
