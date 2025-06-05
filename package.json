@@ -1,13 +1,13 @@
 {
-  "name": "tw-tree-monorepo",
+  "name": "tailwind-tree-monorepo",
   "private": true,
   "version": "0.0.1",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "build": "pnpm --filter=tw-tree build",
-    "lint": "pnpm --filter=tw-tree lint",
+    "build": "pnpm --filter=tailwind-tree build",
+    "lint": "pnpm --filter=tailwind-tree lint",
     "dev": "rollup -c -w"
   }
 }
