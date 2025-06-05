@@ -1,17 +1,15 @@
 {
   "name": "tailwind-tree-monorepo",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.1.8",
   "workspaces": [
     "packages/*"
   ],
-  "main": "./packages/tailwind-tree/dist/index.cjs",
-  "module": "./packages/tailwind-tree/dist/index.mjs",
+  "module": "./packages/tailwind-tree/dist/index.js",
   "types": "./packages/tailwind-tree/dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./packages/tailwind-tree/dist/index.cjs",
-      "import": "./packages/tailwind-tree/dist/index.mjs",
+      "import": "./packages/tailwind-tree/dist/index.js",
       "types": "./packages/tailwind-tree/dist/index.d.ts"
     }
   },
