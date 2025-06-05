@@ -8,7 +8,6 @@ export function twTree(input: any[], prefix = ""): string {
     if (typeof item === "string") {
       const fullClass = prefix + item;
       classes.push(fullClass);
-      console.log({ classCollector: [...classCollector] });
       classCollector.add(fullClass);
     } else if (typeof item === "object" && item !== null) {
       for (const variant in item) {

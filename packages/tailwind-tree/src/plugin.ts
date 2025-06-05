@@ -1,25 +1,23 @@
-// plugins/vite-plugin-twtree.ts
-
 import type { Plugin } from "vite";
-import { writeTwSafelist } from "./utils/writeTwSafelist";
+import { generateTwSafelist } from "./utils/generateTwSafelist";
 
 export function twTreePlugin(): Plugin {
   return {
-    name: "vite-plugin-twtree",
+    name: "vite-plugin-tailwind-tree",
 
     // Called in dev mode on each file change or rebuild
     handleHotUpdate() {
-      writeTwSafelist();
+      generateTwSafelist();
     },
 
     // Called once during build
     buildStart() {
-      writeTwSafelist();
+      generateTwSafelist();
     },
 
     // Optionally, run at end of build too
     closeBundle() {
-      writeTwSafelist();
+      generateTwSafelist();
     },
   };
 }

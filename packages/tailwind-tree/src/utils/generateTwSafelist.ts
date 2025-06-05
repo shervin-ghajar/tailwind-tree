@@ -1,33 +1,31 @@
 import chalk from "chalk";
-import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 import { twTree } from "./twTree";
+import JSON5 from "json5";
+import { ROOT_PATH } from "../constants";
 
-const ROOT_PATH = path.resolve(fileURLToPath(import.meta.url), "../"); //dist path
+const isModule = ROOT_PATH.includes("dist");
 // Define the path to your generated styles file
-const generatedTwSafelistPath = path.resolve(ROOT_PATH, "tw-safelist.js");
+const generatedTwSafelistPath = path.resolve(ROOT_PATH, isModule ? "tw-safelist.js" : "../tw-safelist.ts");
 
 // Function to check if the generated twSafelist file exists
 const checkTwSafelistFileExists = (filePath: string): void => {
   if (!fs.existsSync(filePath)) {
     throw new Error(`${filePath} does not exist`);
   }
-  execSync("npx generate-rn-stylewind");
 };
 
 // Function to collect used styles from source files
 const collectUsedClasses = (sourceFiles: string[]): Set<string> => {
   const usedClasses = new Set<string>();
-  const twTreeRegex = /twTree\(\[([^\]]*)\]\)/g; // Regex to match styles([...])
+  const twTreeRegex = /twTree\s*\(\s*(\[(?:[\s\S]*?)\])\s*\)/g; // Regex to match styles([...])
 
   sourceFiles.forEach((filePath) => {
     const data = fs.readFileSync(filePath, "utf8");
     let match;
-
     while ((match = twTreeRegex.exec(data)) !== null) {
-      const args = match[1].split(",").map((arg) => arg.trim().replace(/['"]/g, ""));
+      const args = JSON5.parse(match[1]);
       twTree(args)
         .split(" ")
         .forEach((arg) => usedClasses.add(arg));
@@ -61,7 +59,6 @@ const updateTwSafelistFile = (filePath: string, filteredTwSafelist: Array<string
 const getAllSourceFiles = (dir: string): string[] => {
   let results: string[] = [];
   const list = (fs.readdirSync(dir) || []).filter((d) => !["node_modules", "dist"].includes(d));
-
   list.forEach((file) => {
     const filePath = path.join(dir, file);
     const stat = fs.statSync(filePath);
@@ -69,7 +66,7 @@ const getAllSourceFiles = (dir: string): string[] => {
     if (stat && stat.isDirectory()) {
       // Recursively get files from subdirectories
       results = results.concat(getAllSourceFiles(filePath));
-    } else if (file.endsWith(".tsx") || file.endsWith(".js")) {
+    } else if (file.endsWith(".tsx") || file.endsWith(".ts") || file.endsWith(".js")) {
       // Add .tsx and .js files to the results
       results.push(filePath);
     }
@@ -79,7 +76,7 @@ const getAllSourceFiles = (dir: string): string[] => {
 };
 
 // Main function to execute the script
-export const writeTwSafelist = async () => {
+export const generateTwSafelist = async () => {
   try {
     checkTwSafelistFileExists(generatedTwSafelistPath);
 
