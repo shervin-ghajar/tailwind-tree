@@ -1,3 +1,3 @@
-declare const twSafelist: never[];
+declare const twSafelist: Array<string>;
 
 export { twSafelist };

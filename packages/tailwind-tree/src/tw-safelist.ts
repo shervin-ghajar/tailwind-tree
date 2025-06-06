@@ -1,1 +1,1 @@
-export const twSafelist = [];
+export const twSafelist: Array<string> = [];
