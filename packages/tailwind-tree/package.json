@@ -1,21 +1,24 @@
 {
   "name": "tailwind-tree",
   "private": false,
-  "version": "0.1.10",
+  "version": "0.1.11",
   "type": "module",
   "author": {
     "name": "Shervin Ghajar",
     "email": "ssghajar.work@gmail.com"
   },
-  "module": "dist/index.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
     },
     "./node": {
-      "import": "./dist/node.js"
+      "import": "./dist/node.js",
+      "types": "./dist/node.d.ts"
     }
   },
   "scripts": {

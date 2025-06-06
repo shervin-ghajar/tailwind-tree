@@ -4,27 +4,39 @@ import resolve from "@rollup/plugin-node-resolve";
 import dts from "rollup-plugin-dts";
 import del from "rollup-plugin-delete";
 
-const inputMap = {
-  index: "src/index.ts",
-  "tw-safelist": "src/tw-safelist.ts",
-  node: "src/node/index.ts",
-};
-
 export default [
-  // JS Build
   {
-    input: inputMap,
+    input: "src/index.ts",
+    output: [
+      {
+        file: "dist/index.mjs",
+        format: "esm",
+        sourcemap: false,
+      },
+      {
+        file: "dist/index.cjs",
+        format: "cjs",
+        sourcemap: false,
+        exports: "named",
+      },
+    ],
+    external: [],
+    plugins: [del({ targets: "dist/*" }), resolve(), commonjs(), typescript({ tsconfig: "./tsconfig.json" })],
+  },
+  {
+    input: {
+      "tw-safelist": "src/tw-safelist.ts",
+      node: "src/node/index.ts",
+    },
     output: {
       dir: "dist",
       format: "esm",
       sourcemap: false,
-      entryFileNames: "[name].js", // ensures node.ts -> node.js (not index2.js)
+      entryFileNames: "[name].js",
     },
-    external: [], // mark dependencies like 'fs', 'url' if needed
-    plugins: [del({ targets: "dist" }), resolve(), commonjs(), typescript({ tsconfig: "./tsconfig.json" })],
+    external: [],
+    plugins: [resolve(), commonjs(), typescript({ tsconfig: "./tsconfig.json" })],
   },
-
-  // Type Declarations
   {
     input: "src/index.ts",
     output: { file: "dist/index.d.ts", format: "es" },

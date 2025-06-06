@@ -1,13 +1,6 @@
-import { twSafelist } from './tw-safelist.js';
 import fs from 'fs';
 import path from 'path';
-import { twTree } from './index.js';
 import { fileURLToPath } from 'url';
-
-// Export the collected classes
-function getTwSafelist() {
-    return twSafelist;
-}
 
 const ANSI_BACKGROUND_OFFSET = 10;
 
@@ -485,6 +478,26 @@ Object.defineProperties(createChalk.prototype, styles);
 
 const chalk = createChalk();
 createChalk({level: stderrColor ? stderrColor.level : 0});
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const classCollector = new Set([]);
+function twTree(input, prefix = "") {
+    const classes = [];
+    for (const item of input) {
+        if (typeof item === "string") {
+            const fullClass = prefix + item;
+            classes.push(fullClass);
+            classCollector.add(fullClass);
+        }
+        else if (typeof item === "object" && item !== null) {
+            for (const variant in item) {
+                const nested = twTree(item[variant], `${prefix}${variant}:`);
+                classes.push(nested);
+            }
+        }
+    }
+    return classes.join(" ");
+}
 
 // This is a generated file. Do not edit.
 var Space_Separator = /[\u1680\u2000-\u200A\u202F\u205F\u3000]/;
@@ -2007,4 +2020,4 @@ function twTreePlugin() {
     };
 }
 
-export { generateTwSafelist, getTwSafelist, twTreePlugin };
+export { generateTwSafelist, twTreePlugin };

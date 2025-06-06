@@ -18,4 +18,11 @@ function twTree(input, prefix = "") {
     return classes.join(" ");
 }
 
-export { twTree };
+const twSafelist = [];
+
+// Export the collected classes
+function getTwSafelist() {
+    return twSafelist;
+}
+
+export { getTwSafelist, twTree };
