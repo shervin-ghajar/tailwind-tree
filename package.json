@@ -1,7 +1,7 @@
 {
   "name": "tailwind-tree-monorepo",
   "private": true,
-  "version": "0.1.12",
+  "version": "0.1.13",
   "workspaces": [
     "packages/*"
   ],
@@ -13,6 +13,10 @@
       "import": "./packages/tailwind-tree/dist/index.mjs",
       "require": "./packages/tailwind-tree/dist/index.cjs",
       "types": "./packages/tailwind-tree/dist/index.d.ts"
+    },
+    "./tw-safelist": {
+      "import": "./packages/tailwind-tree/dist/tw-safelist.js",
+      "types": "./packages/tailwind-tree/dist/tw-safelist.d.ts"
     },
     "./node": {
       "import": "./packages/tailwind-tree/dist/node.js",

@@ -8,7 +8,6 @@ import { ROOT_PATH } from "../constants";
 const isModule = ROOT_PATH.includes("dist");
 // Define the path to your generated styles file
 const generatedTwSafelistPath = path.resolve(ROOT_PATH, isModule ? "tw-safelist.js" : "../tw-safelist.ts");
-
 // Function to check if the generated twSafelist file exists
 const checkTwSafelistFileExists = (filePath: string): void => {
   if (!fs.existsSync(filePath)) {
@@ -79,6 +78,7 @@ const getAllSourceFiles = (dir: string): string[] => {
 export const generateTwSafelist = async () => {
   try {
     checkTwSafelistFileExists(generatedTwSafelistPath);
+    console.log({ generatedTwSafelistPath });
 
     // Get all .tsx and .js files in the project directory
     const sourceFiles = getAllSourceFiles(process.cwd());
@@ -89,3 +89,5 @@ export const generateTwSafelist = async () => {
     process.exit(1);
   }
 };
+
+generateTwSafelist();
