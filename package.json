@@ -5,18 +5,18 @@
   "workspaces": [
     "packages/*"
   ],
-  "main": "./packages/tailwind-tree/index.cjs",
-  "module": "./packages/tailwind-tree/index.mjs",
-  "types": "./packages/tailwind-tree/index.d.ts",
+  "main": "./packages/tailwind-tree/dist/index.cjs",
+  "module": "./packages/tailwind-tree/dist/index.mjs",
+  "types": "./packages/tailwind-tree/dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./packages/tailwind-tree/index.mjs",
-      "require": "./packages/tailwind-tree/index.cjs",
-      "types": "./packages/tailwind-tree/index.d.ts"
+      "import": "./packages/tailwind-tree/dist/index.mjs",
+      "require": "./packages/tailwind-tree/dist/index.cjs",
+      "types": "./packages/tailwind-tree/dist/index.d.ts"
     },
     "./node": {
-      "import": "./packages/tailwind-tree/node.js",
-      "types": "./packages/tailwind-tree/node.d.ts"
+      "import": "./packages/tailwind-tree/dist/node.js",
+      "types": "./packages/tailwind-tree/dist/node.d.ts"
     }
   },
   "scripts": {
