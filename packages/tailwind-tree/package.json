@@ -1,7 +1,7 @@
 {
   "name": "tailwind-tree",
   "private": false,
-  "version": "0.1.9",
+  "version": "0.1.10",
   "type": "module",
   "author": {
     "name": "Shervin Ghajar",
@@ -13,6 +13,9 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./node": {
+      "import": "./dist/node.js"
     }
   },
   "scripts": {
