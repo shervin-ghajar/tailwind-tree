@@ -1,1 +1,3 @@
-export declare function getTwSafelist(): string[];
+declare function getTwSafelist(): string[];
+
+export { getTwSafelist };

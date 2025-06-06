@@ -1,3 +1,5 @@
+export { getTwSafelist } from './utils/getTwSafelist';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const classCollector = new Set([]);
 function twTree(input, prefix = "") {
@@ -18,11 +20,4 @@ function twTree(input, prefix = "") {
     return classes.join(" ");
 }
 
-const twSafelist = [];
-
-// Export the collected classes
-function getTwSafelist() {
-    return twSafelist;
-}
-
-export { getTwSafelist, twTree };
+export { twTree };
