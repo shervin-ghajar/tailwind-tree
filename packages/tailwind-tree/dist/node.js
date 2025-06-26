@@ -2018,18 +2018,32 @@ const generateTwSafelist = async () => {
 };
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+path.dirname(__filename);
+// Utility: debounce function
+function debounce(fn, delay = 300) {
+    let timer;
+    return () => {
+        clearTimeout(timer);
+        timer = setTimeout(fn, delay);
+    };
+}
 function twTreePlugin() {
     let server;
     return {
         name: "vite-plugin-tailwind-tree",
         configureServer(_server) {
             server = _server;
-            // Watch for changes to the safelist file and trigger full reload
-            const safelistPath = path.resolve(__dirname, "../tw-safelist.js");
-            fs.watchFile(safelistPath, () => {
-                console.log("[tailwind-tree] 🔄 tw-safelist.js updated — restarting server");
-                server?.restart(); // force dev server restart
+            const safelistPath = path.resolve(process.cwd(), "node_modules/tailwind-tree-monorepo/packages/tailwind-tree/dist/tw-safelist.js");
+            // Watch for changes and trigger full reload (debounced)
+            const triggerReload = debounce(() => {
+                console.log("[tailwind-tree] 🔄 tw-safelist.js updated — reloading browser");
+                server?.ws.send({ type: "full-reload" });
+            }, 500);
+            server.watcher.add(safelistPath);
+            server.watcher.on("change", (file) => {
+                if (file === safelistPath) {
+                    triggerReload();
+                }
             });
         },
         handleHotUpdate() {
