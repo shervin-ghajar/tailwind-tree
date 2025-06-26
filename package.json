@@ -1,7 +1,7 @@
 {
   "name": "tailwind-tree-monorepo",
   "private": true,
-  "version": "0.1.18",
+  "version": "0.1.19",
   "workspaces": [
     "packages/*"
   ],
