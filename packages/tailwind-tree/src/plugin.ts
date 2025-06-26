@@ -24,7 +24,7 @@ export function twTreePlugin(): Plugin {
     configureServer(_server) {
       server = _server;
 
-      const safelistPath = path.resolve(process.cwd(), "node_modules/tailwind-tree-monorepo/packages/tailwind-tree/dist/tw-safelist.js");
+      const safelistPath = path.resolve(process.cwd(), "tw-safelist.js");
 
       // Watch for changes and trigger full reload (debounced)
       const triggerReload = debounce(() => {

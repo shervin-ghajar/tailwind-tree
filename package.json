@@ -14,10 +14,6 @@
       "require": "./packages/tailwind-tree/dist/index.cjs",
       "types": "./packages/tailwind-tree/dist/index.d.ts"
     },
-    "./tw-safelist": {
-      "import": "./packages/tailwind-tree/dist/tw-safelist.js",
-      "types": "./packages/tailwind-tree/dist/tw-safelist.d.ts"
-    },
     "./node": {
       "import": "./packages/tailwind-tree/dist/node.js",
       "types": "./packages/tailwind-tree/dist/node.d.ts"

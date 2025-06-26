@@ -1924,95 +1924,63 @@ const JSON5 = {
 
 var lib = JSON5;
 
-const ROOT_PATH = path.resolve(fileURLToPath(import.meta.url), "../"); //dist path
-
-const isModule = ROOT_PATH.includes("dist");
-// Define the path to your generated styles file
-const generatedTwSafelistPath = path.resolve(ROOT_PATH, isModule ? "tw-safelist.js" : "../tw-safelist.ts");
-// Function to check if the generated twSafelist file exists
-const checkTwSafelistFileExists = (filePath) => {
-    if (!fs.existsSync(filePath)) {
-        throw new Error(`${filePath} does not exist`);
-    }
-};
-// Function to collect used styles from source files
-const collectUsedClasses = (sourceFiles) => {
-    const usedClasses = new Set();
-    const twTreeRegex = /twTree\s*\(\s*(\[(?:[\s\S]*?)\])\s*\)/g; // Regex to match styles([...])
-    sourceFiles.forEach((filePath) => {
-        const data = fs.readFileSync(filePath, "utf8");
-        let match;
-        while ((match = twTreeRegex.exec(data)) !== null) {
-            try {
-                const extracted = match[1];
-                if (typeof extracted === "string" && extracted.trim().length > 0) {
-                    const args = lib.parse(extracted);
-                    twTree(args)
-                        .split(" ")
-                        .forEach((arg) => {
-                        if (arg && typeof arg === "string" && arg.trim()) {
-                            usedClasses.add(arg.trim());
-                        }
-                    });
-                }
-            }
-            catch (e) {
-                console.warn(chalk.yellowBright(`⚠️  Failed to parse twTree in file: ${filePath}`));
-                console.warn(chalk.gray(match[0]));
-                console.warn(e);
-            }
-        }
-    });
-    return usedClasses;
-};
-// Function to update the twSafelist file with filtered data
-const updateTwSafelistFile = (filePath, filteredTwSafelist) => {
-    fs.readFile(filePath, "utf8", (err, data) => {
-        if (err) {
-            console.error("Error reading the file:", err);
-            return;
-        }
-        const updatedTwSafelist = data.replace(/(const twSafelist =)[\s\S]*?(;)/, `$1 ${JSON.stringify(filteredTwSafelist, null, 4)}$2`);
-        fs.writeFile(filePath, updatedTwSafelist, "utf8", (err) => {
-            if (err) {
-                console.error("Error writing updated twSafelist:", err);
-                return;
-            }
-            console.log(chalk.greenBright("tailwind-tree compile completed!"));
-        });
-    });
-};
-// Function to recursively get all .tsx and .js files in a directory
+const consumerSafelistPath = path.resolve(process.cwd(), "tw-safelist.js"); // <-- output in consumer root
+// Collect all source files recursively
 const getAllSourceFiles = (dir) => {
     let results = [];
-    const list = (fs.readdirSync(dir) || []).filter((d) => !["node_modules", "dist"].includes(d));
-    list.forEach((file) => {
-        const filePath = path.join(dir, file);
-        const stat = fs.statSync(filePath);
-        // if(["node_modules"].includes(filePath))
-        if (stat && stat.isDirectory()) {
-            // Recursively get files from subdirectories
-            results = results.concat(getAllSourceFiles(filePath));
+    const entries = (fs.readdirSync(dir) || []).filter((d) => !["node_modules", "dist", ".git"].includes(d));
+    for (const file of entries) {
+        const fullPath = path.join(dir, file);
+        const stat = fs.statSync(fullPath);
+        if (stat.isDirectory()) {
+            results = results.concat(getAllSourceFiles(fullPath));
         }
-        else if (file.endsWith(".tsx") || file.endsWith(".ts") || file.endsWith(".js")) {
-            // Add .tsx and .js files to the results
-            results.push(filePath);
+        else if (/\.(ts|tsx|js|jsx)$/.test(file)) {
+            results.push(fullPath);
         }
-    });
+    }
     return results;
 };
-// Main function to execute the script
+// Extract twTree classes from all files
+const collectUsedClasses = (sourceFiles) => {
+    const usedClasses = new Set();
+    const twTreeRegex = /twTree\s*\(\s*(\[(?:[\s\S]*?)\])\s*\)/g;
+    for (const filePath of sourceFiles) {
+        const content = fs.readFileSync(filePath, "utf8");
+        let match;
+        while ((match = twTreeRegex.exec(content)) !== null) {
+            try {
+                const raw = match[1];
+                if (typeof raw === "string" && raw.trim().length > 0) {
+                    const parsed = lib.parse(raw);
+                    const flattened = twTree(parsed).split(" ");
+                    flattened.forEach((cls) => cls && usedClasses.add(cls.trim()));
+                }
+            }
+            catch (err) {
+                console.warn(chalk.yellow(`⚠️  Failed to parse twTree in file: ${filePath}`));
+                console.warn(chalk.gray(match[0]));
+                console.warn(err);
+            }
+        }
+    }
+    return usedClasses;
+};
+// Write the safelist as a valid JS module
+const writeSafelistToFile = (filePath, classes) => {
+    const contents = `// Auto-generated by tailwind-tree\n` + `// Do not manually edit this file.\n\n` + `module.exports = ${JSON.stringify(classes.sort(), null, 2)};\n`;
+    fs.writeFileSync(filePath, contents, "utf8");
+    console.log(chalk.greenBright(`✅ Generated safelist with ${classes.length} classes → ${filePath}`));
+};
+// Main generation function
 const generateTwSafelist = async () => {
     try {
-        checkTwSafelistFileExists(generatedTwSafelistPath);
-        // Get all .tsx and .js files in the project directory
-        const sourceFiles = getAllSourceFiles(process.cwd());
-        const usedClasses = collectUsedClasses(sourceFiles);
-        const sortedSafelist = [...usedClasses].sort();
-        updateTwSafelistFile(generatedTwSafelistPath, sortedSafelist);
+        const files = getAllSourceFiles(process.cwd());
+        const classes = collectUsedClasses(files);
+        writeSafelistToFile(consumerSafelistPath, [...classes]);
     }
     catch (error) {
-        console.error("Error loading generated twSafelist:", error);
+        console.error("❌ Error generating tw-safelist:", error);
         process.exit(1);
     }
 };
@@ -2033,7 +2001,7 @@ function twTreePlugin() {
         name: "vite-plugin-tailwind-tree",
         configureServer(_server) {
             server = _server;
-            const safelistPath = path.resolve(process.cwd(), "node_modules/tailwind-tree-monorepo/packages/tailwind-tree/dist/tw-safelist.js");
+            const safelistPath = path.resolve(process.cwd(), "tw-safelist.js");
             // Watch for changes and trigger full reload (debounced)
             const triggerReload = debounce(() => {
                 console.log("[tailwind-tree] 🔄 tw-safelist.js updated — reloading browser");

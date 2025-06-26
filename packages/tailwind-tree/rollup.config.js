@@ -22,7 +22,6 @@ export default [
       },
     ],
     // Prevent bundling getTwSafelist here; it stays separate
-    external: ["./utils/getTwSafelist", "./tw-safelist"],
     plugins: [
       del({ targets: "dist/*" }), // clean dist on first build only
       resolve(),
@@ -34,9 +33,7 @@ export default [
   // 2. Separate build for tw-safelist and node/index.ts (multi-entry)
   {
     input: {
-      "tw-safelist": "src/tw-safelist.ts",
       node: "src/node/index.ts",
-      "utils/getTwSafelist": "src/utils/getTwSafelist.ts",
     },
     output: {
       dir: "dist",
@@ -55,18 +52,8 @@ export default [
     plugins: [dts()],
   },
   {
-    input: "src/tw-safelist.ts",
-    output: { file: "dist/tw-safelist.d.ts", format: "es" },
-    plugins: [dts()],
-  },
-  {
     input: "src/node/index.ts",
     output: { file: "dist/node.d.ts", format: "es" },
-    plugins: [dts()],
-  },
-  {
-    input: "src/utils/getTwSafelist.ts",
-    output: { file: "dist/utils/getTwSafelist.d.ts", format: "es" },
     plugins: [dts()],
   },
 ];
