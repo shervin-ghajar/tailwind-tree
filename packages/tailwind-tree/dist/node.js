@@ -1943,10 +1943,24 @@ const collectUsedClasses = (sourceFiles) => {
         const data = fs.readFileSync(filePath, "utf8");
         let match;
         while ((match = twTreeRegex.exec(data)) !== null) {
-            const args = lib.parse(match[1]);
-            twTree(args)
-                .split(" ")
-                .forEach((arg) => usedClasses.add(arg));
+            try {
+                const extracted = match[1];
+                if (typeof extracted === "string" && extracted.trim().length > 0) {
+                    const args = lib.parse(extracted);
+                    twTree(args)
+                        .split(" ")
+                        .forEach((arg) => {
+                        if (arg && typeof arg === "string" && arg.trim()) {
+                            usedClasses.add(arg.trim());
+                        }
+                    });
+                }
+            }
+            catch (e) {
+                console.warn(chalk.yellowBright(`⚠️  Failed to parse twTree in file: ${filePath}`));
+                console.warn(chalk.gray(match[0]));
+                console.warn(e);
+            }
         }
     });
     return usedClasses;
@@ -1994,14 +2008,17 @@ const generateTwSafelist = async () => {
         // Get all .tsx and .js files in the project directory
         const sourceFiles = getAllSourceFiles(process.cwd());
         const usedClasses = collectUsedClasses(sourceFiles);
-        updateTwSafelistFile(generatedTwSafelistPath, [...usedClasses]);
+        const sortedSafelist = [...usedClasses].sort();
+        updateTwSafelistFile(generatedTwSafelistPath, sortedSafelist);
     }
     catch (error) {
         console.error("Error loading generated twSafelist:", error);
         process.exit(1);
     }
 };
-generateTwSafelist();
+if (require.main === module) {
+    generateTwSafelist();
+}
 
 function twTreePlugin() {
     return {
