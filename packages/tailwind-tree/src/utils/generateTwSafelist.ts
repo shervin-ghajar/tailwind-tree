@@ -78,7 +78,6 @@ const getAllSourceFiles = (dir: string): string[] => {
 export const generateTwSafelist = async () => {
   try {
     checkTwSafelistFileExists(generatedTwSafelistPath);
-    console.log({ generatedTwSafelistPath });
 
     // Get all .tsx and .js files in the project directory
     const sourceFiles = getAllSourceFiles(process.cwd());

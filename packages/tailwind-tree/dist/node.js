@@ -2001,6 +2001,7 @@ const generateTwSafelist = async () => {
         process.exit(1);
     }
 };
+generateTwSafelist();
 
 function twTreePlugin() {
     return {

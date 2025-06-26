@@ -1,3 +1,3 @@
-declare const twSafelist: Array<string>;
+declare const twSafelist: string[];
 
 export { twSafelist };
