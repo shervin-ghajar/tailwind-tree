@@ -2016,10 +2016,9 @@ const generateTwSafelist = async () => {
         process.exit(1);
     }
 };
-if (require.main === module) {
-    generateTwSafelist();
-}
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 function twTreePlugin() {
     let server;
     return {

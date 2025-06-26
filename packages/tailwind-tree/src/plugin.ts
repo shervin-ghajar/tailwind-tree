@@ -2,7 +2,10 @@ import type { Plugin, ViteDevServer } from "vite";
 import { generateTwSafelist } from "./utils/generateTwSafelist";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 export function twTreePlugin(): Plugin {
   let server: ViteDevServer | undefined;
 

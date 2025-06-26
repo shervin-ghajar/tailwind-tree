@@ -102,7 +102,3 @@ export const generateTwSafelist = async () => {
     process.exit(1);
   }
 };
-
-if (require.main === module) {
-  generateTwSafelist();
-}
