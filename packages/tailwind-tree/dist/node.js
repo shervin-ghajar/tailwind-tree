@@ -2021,17 +2021,24 @@ if (require.main === module) {
 }
 
 function twTreePlugin() {
+    let server;
     return {
         name: "vite-plugin-tailwind-tree",
-        // Called in dev mode on each file change or rebuild
+        configureServer(_server) {
+            server = _server;
+            // Watch for changes to the safelist file and trigger full reload
+            const safelistPath = path.resolve(__dirname, "../tw-safelist.js");
+            fs.watchFile(safelistPath, () => {
+                console.log("[tailwind-tree] 🔄 tw-safelist.js updated — restarting server");
+                server?.restart(); // force dev server restart
+            });
+        },
         handleHotUpdate() {
             generateTwSafelist();
         },
-        // Called once during build
         buildStart() {
             generateTwSafelist();
         },
-        // Optionally, run at end of build too
         closeBundle() {
             generateTwSafelist();
         },
