@@ -1,3 +1,3 @@
 const twSafelist: string[] = [];
 
-export { twSafelist };
+export default twSafelist;
