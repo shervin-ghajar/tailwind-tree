@@ -21,7 +21,7 @@ declare function twTree(input: any[], prefix?: string): string;
  * Extracts all Tailwind classes from a source string.
  * This includes:
  *  1. Classes defined via `twTree([...])` nested syntax
- *  2. Traditional string-based class declarations (e.g., className="...")
+ *  2. Traditional string-based class detection (standard Tailwind strategy)
  *
  * This function is compatible with Tailwind v3 `content.extract` for custom class detection.
  *

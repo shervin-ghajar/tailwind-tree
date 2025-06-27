@@ -6,7 +6,7 @@ import { fallbackClassRegex, twTreeRegex } from "../constants";
  * Extracts all Tailwind classes from a source string.
  * This includes:
  *  1. Classes defined via `twTree([...])` nested syntax
- *  2. Traditional string-based class declarations (e.g., className="...")
+ *  2. Traditional string-based class detection (standard Tailwind strategy)
  *
  * This function is compatible with Tailwind v3 `content.extract` for custom class detection.
  *
@@ -15,28 +15,27 @@ import { fallbackClassRegex, twTreeRegex } from "../constants";
  */
 export function extractTwTree(content: string): string[] {
   const classNames = new Set<string>();
-
-  // 1. Extract classes from twTree([...])
-  for (const match of content.matchAll(twTreeRegex)) {
-    try {
-      const parsed = JSON5.parse(match[1]);
-      const result = twTree(parsed);
-      result
-        .split(" ")
-        .filter(Boolean)
-        .forEach((cls) => classNames.add(cls));
-    } catch (err) {
-      console.warn("⚠️ Failed to parse twTree(...) in extract.", err);
+  const twTreeMatches = [...content.matchAll(twTreeRegex)];
+  if (twTreeMatches.length > 0) {
+    // 1. Extract classes from twTree([...])
+    for (const match of content.matchAll(twTreeRegex)) {
+      try {
+        const parsed = JSON5.parse(match[1]);
+        const result = twTree(parsed);
+        result
+          .split(" ")
+          .filter(Boolean)
+          .forEach((cls) => classNames.add(cls));
+      } catch (err) {
+        console.warn("⚠️ Failed to parse twTree(...) in extract.", err);
+      }
     }
-  }
-
-  // 2. Extract fallback classes from any string-like props (e.g. className="...")
-  for (const match of content.matchAll(fallbackClassRegex)) {
-    const rawClasses = match[1];
-    rawClasses
-      .split(/\s+/)
-      .filter(Boolean)
-      .forEach((cls) => classNames.add(cls));
+  } else {
+    // 2. Fallback to default class detection (standard Tailwind strategy)
+    const fallbackMatches = [...content.matchAll(fallbackClassRegex)];
+    fallbackMatches.forEach((m) => {
+      if (m[0]) classNames.add(m[0]);
+    });
   }
 
   return [...classNames];
