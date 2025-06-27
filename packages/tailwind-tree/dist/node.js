@@ -1924,7 +1924,6 @@ const JSON5 = {
 
 var lib = JSON5;
 
-path.resolve(fileURLToPath(import.meta.url), "../"); //dist path
 const twTreeRegex = /twTree\s*\(\s*(\[(?:[\s\S]*?)\])\s*\)/g;
 
 const consumerSafelistPath = path.resolve(process.cwd(), "tw-safelist.js"); // <-- output in consumer root

@@ -1,9 +1,5 @@
 'use strict';
 
-var path = require('path');
-var url = require('url');
-
-var _documentCurrentScript = typeof document !== 'undefined' ? document.currentScript : null;
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const classCollector = new Set([]);
 function twTree(input, prefix = "") {
@@ -1449,7 +1445,6 @@ const JSON5 = {
 
 var lib = JSON5;
 
-path.resolve(url.fileURLToPath((typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (_documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === 'SCRIPT' && _documentCurrentScript.src || new URL('index.cjs', document.baseURI).href))), "../"); //dist path
 const twTreeRegex = /twTree\s*\(\s*(\[(?:[\s\S]*?)\])\s*\)/g;
 
 /**
