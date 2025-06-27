@@ -1,28 +1,42 @@
 import JSON5 from "json5";
 import { twTree } from "./twTree";
-import { twTreeRegex } from "../constants";
+import { fallbackClassRegex, twTreeRegex } from "../constants";
 
 /**
- * Extracts Tailwind classes from source using custom logic.
- * @param content Source code string
- * @returns Array of unique class names
+ * Extracts all Tailwind classes from a source string.
+ * This includes:
+ *  1. Classes defined via `twTree([...])` nested syntax
+ *  2. Traditional string-based class declarations (e.g., className="...")
+ *
+ * This function is compatible with Tailwind v3 `content.extract` for custom class detection.
+ *
+ * @param content - The source code string (e.g. from .tsx/.js/.vue files)
+ * @returns Array of unique Tailwind class names used in the file
  */
 export function extractTwTree(content: string): string[] {
-  const matches = [...content.matchAll(twTreeRegex)];
   const classNames = new Set<string>();
 
-  for (const match of matches) {
+  // 1. Extract classes from twTree([...])
+  for (const match of content.matchAll(twTreeRegex)) {
     try {
-      const rawArray = match[1];
-      const parsed = JSON5.parse(rawArray);
+      const parsed = JSON5.parse(match[1]);
       const result = twTree(parsed);
       result
         .split(" ")
         .filter(Boolean)
-        .forEach((cls: string) => classNames.add(cls));
+        .forEach((cls) => classNames.add(cls));
     } catch (err) {
-      console.warn(`⚠️ Failed to parse twTree(...) in extract.`, err);
+      console.warn("⚠️ Failed to parse twTree(...) in extract.", err);
     }
+  }
+
+  // 2. Extract fallback classes from any string-like props (e.g. className="...")
+  for (const match of content.matchAll(fallbackClassRegex)) {
+    const rawClasses = match[1];
+    rawClasses
+      .split(/\s+/)
+      .filter(Boolean)
+      .forEach((cls) => classNames.add(cls));
   }
 
   return [...classNames];
