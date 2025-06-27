@@ -21,7 +21,6 @@ export default [
         exports: "named",
       },
     ],
-    // Prevent bundling getTwSafelist here; it stays separate
     plugins: [
       del({ targets: "dist/*" }), // clean dist on first build only
       resolve(),
@@ -30,7 +29,7 @@ export default [
     ],
   },
 
-  // 2. Separate build for tw-safelist and node/index.ts (multi-entry)
+  // 2. Separate build for node/index.ts (multi-entry)
   {
     input: {
       node: "src/node/index.ts",
@@ -41,7 +40,6 @@ export default [
       sourcemap: false,
       entryFileNames: "[name].js",
     },
-    external: ["./tw-safelist"], // mark tw-safelist external here too if needed
     plugins: [resolve(), commonjs(), typescript({ tsconfig: "./tsconfig.json" })],
   },
 

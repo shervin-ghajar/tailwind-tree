@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { twTree } from "./twTree";
 import JSON5 from "json5";
+import { twTreeRegex } from "../constants";
 
 const consumerSafelistPath = path.resolve(process.cwd(), "tw-safelist.js"); // <-- output in consumer root
 
@@ -33,7 +34,6 @@ const getAllSourceFiles = (dir: string): string[] => {
 // Extract twTree classes from all files
 const collectUsedClasses = (sourceFiles: string[]): Set<string> => {
   const usedClasses = new Set<string>();
-  const twTreeRegex = /twTree\s*\(\s*(\[(?:[\s\S]*?)\])\s*\)/g;
 
   for (const filePath of sourceFiles) {
     const content = fs.readFileSync(filePath, "utf8");

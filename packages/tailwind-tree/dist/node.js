@@ -1924,6 +1924,9 @@ const JSON5 = {
 
 var lib = JSON5;
 
+path.resolve(fileURLToPath(import.meta.url), "../"); //dist path
+const twTreeRegex = /twTree\s*\(\s*(\[(?:[\s\S]*?)\])\s*\)/g;
+
 const consumerSafelistPath = path.resolve(process.cwd(), "tw-safelist.js"); // <-- output in consumer root
 // Collect all source files recursively
 const getAllSourceFiles = (dir) => {
@@ -1947,7 +1950,6 @@ const getAllSourceFiles = (dir) => {
 // Extract twTree classes from all files
 const collectUsedClasses = (sourceFiles) => {
     const usedClasses = new Set();
-    const twTreeRegex = /twTree\s*\(\s*(\[(?:[\s\S]*?)\])\s*\)/g;
     for (const filePath of sourceFiles) {
         const content = fs.readFileSync(filePath, "utf8");
         let match;
