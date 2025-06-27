@@ -1,30 +1,70 @@
 {
-  "name": "tailwind-tree-monorepo",
-  "private": true,
-  "version": "0.1.21",
-  "workspaces": [
-    "packages/*"
-  ],
-  "main": "./packages/tailwind-tree/dist/index.cjs",
-  "module": "./packages/tailwind-tree/dist/index.mjs",
-  "types": "./packages/tailwind-tree/dist/index.d.ts",
+  "name": "tailwind-tree",
+  "private": false,
+  "version": "0.1.22",
+  "type": "module",
+  "author": {
+    "name": "Shervin Ghajar",
+    "email": "ssghajar.work@gmail.com"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./packages/tailwind-tree/dist/index.mjs",
-      "require": "./packages/tailwind-tree/dist/index.cjs",
-      "types": "./packages/tailwind-tree/dist/index.d.ts"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
     },
     "./node": {
-      "import": "./packages/tailwind-tree/dist/node.js",
-      "types": "./packages/tailwind-tree/dist/node.d.ts"
+      "import": "./dist/node.js",
+      "types": "./dist/node.d.ts"
     }
   },
   "scripts": {
-    "build": "pnpm --filter=tailwind-tree build",
-    "lint": "pnpm --filter=tailwind-tree lint",
-    "dev": "rollup -c -w"
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "format": "prettier --write --cache .  --plugin=prettier-plugin-organize-imports",
+    "lint": "eslint .",
+    "publish": "pnpm lint && pnpm format && npm publish",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
-    "tsx": "^4.19.4"
+    "@trivago/prettier-plugin-sort-imports": "^4.1.1",
+    "prettier": "^3.5.3",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "@babel/generator": "^7.27.5",
+    "@babel/parser": "^7.27.5",
+    "@babel/traverse": "^7.27.4",
+    "@babel/types": "^7.27.3",
+    "@eslint/js": "^9.25.0",
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@types/babel__generator": "^7.27.0",
+    "@types/babel__traverse": "^7.20.7",
+    "@types/node": "^22.15.29",
+    "chalk": "^5.4.1",
+    "eslint": "^9.25.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "fs": "0.0.1-security",
+    "globals": "^16.0.0",
+    "husky": "^9.1.7",
+    "json5": "^2.2.3",
+    "rollup": "^4.41.1",
+    "rollup-plugin-delete": "^3.0.1",
+    "rollup-plugin-dts": "^6.2.1",
+    "tslib": "^2.8.1",
+    "tsx": "^4.19.4",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.30.1",
+    "unplugin": "^2.3.5"
+  },
+  "peerDependencies": {
+    "vite": "^6.3.5"
   }
 }
