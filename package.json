@@ -1,7 +1,7 @@
 {
   "name": "tailwind-tree-monorepo",
   "private": true,
-  "version": "0.1.15",
+  "version": "0.1.21",
   "workspaces": [
     "packages/*"
   ],
@@ -14,10 +14,6 @@
       "require": "./packages/tailwind-tree/dist/index.cjs",
       "types": "./packages/tailwind-tree/dist/index.d.ts"
     },
-    "./tw-safelist": {
-      "import": "./packages/tailwind-tree/dist/tw-safelist.js",
-      "types": "./packages/tailwind-tree/dist/tw-safelist.d.ts"
-    },
     "./node": {
       "import": "./packages/tailwind-tree/dist/node.js",
       "types": "./packages/tailwind-tree/dist/node.d.ts"
@@ -27,5 +23,8 @@
     "build": "pnpm --filter=tailwind-tree build",
     "lint": "pnpm --filter=tailwind-tree lint",
     "dev": "rollup -c -w"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.4"
   }
 }
