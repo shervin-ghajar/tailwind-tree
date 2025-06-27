@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "moduleResolution":"node",
+    "moduleResolution": "node",
     "target": "esnext", // or "es5" for wider compatibility
     "module": "esnext", // Use "esnext" for Rollup
     "declaration": true, // Generates .d.ts files
@@ -11,6 +11,6 @@
     "forceConsistentCasingInFileNames": true, // Disallow inconsistently-cased references to the same file
     "jsx": "react-jsx" // or "react-native" if applicable
   },
-  "exclude": ["node_modules", "dist"],  // Exclude node_modules and dist folders from compilation
-  "include": ["src/**/*"]  // Include your source files
+  "exclude": ["node_modules", "dist"], // Exclude node_modules and dist folders from compilation
+  "include": ["src/**/*"] // Include your source files
 }

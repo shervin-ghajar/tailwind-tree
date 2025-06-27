@@ -1,4 +1,5 @@
-import { twMerge } from "tailwind-merge";
+import { twMerge } from 'tailwind-merge';
+
 /**
  * Parses a nested Tailwind class structure and returns a flattened string of classes
  * with variants applied, e.g., `hover:bg-red-500`, `md:focus:text-blue-600`.
@@ -16,23 +17,26 @@ import { twMerge } from "tailwind-merge";
  * @param prefix - Internal use for recursive variant prefixing (e.g., `hover:`)
  * @returns A space-separated string of Tailwind classes with prefixes applied
  */
-export function twTree(input: any[], prefix = ""): string {
+export function twTree<T extends string | object>(input: T[], prefix = ''): string {
   const classes: string[] = [];
 
   for (const item of input) {
-    if (typeof item === "string") {
+    if (typeof item === 'string') {
       const tokens = item.trim().split(/\s+/);
       tokens.forEach((token) => {
         const full = prefix + token;
         classes.push(full);
       });
-    } else if (typeof item === "object" && item !== null) {
+    } else if (typeof item === 'object' && item !== null) {
       for (const variant in item) {
-        const nested = twTree(item[variant], `${prefix}${variant}:`);
-        classes.push(nested);
+        const nestedClasses = item[variant];
+        if (Array.isArray(nestedClasses)) {
+          const nested = twTree(nestedClasses, `${prefix}${variant}:`);
+          classes.push(nested);
+        }
       }
     }
   }
 
-  return twMerge(classes.join(" "));
+  return twMerge(classes.join(' '));
 }

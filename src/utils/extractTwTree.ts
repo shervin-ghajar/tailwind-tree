@@ -1,6 +1,6 @@
-import JSON5 from "json5";
-import { twTree } from "./twTree";
-import { fallbackClassRegex, twTreeRegex } from "../constants";
+import JSON5 from 'json5';
+import { fallbackClassRegex, twTreeRegex } from '../constants';
+import { twTree } from './twTree';
 
 /**
  * Extracts all Tailwind classes from a source string.
@@ -23,11 +23,11 @@ export function extractTwTree(content: string): string[] {
         const parsed = JSON5.parse(match[1]);
         const result = twTree(parsed);
         result
-          .split(" ")
+          .split(' ')
           .filter(Boolean)
           .forEach((cls) => classNames.add(cls));
       } catch (err) {
-        console.warn("⚠️ Failed to parse twTree(...) in extract.", err);
+        console.warn('⚠️ Failed to parse twTree(...) in extract.', err);
       }
     }
   } else {
