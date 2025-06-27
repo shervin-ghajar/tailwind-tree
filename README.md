@@ -133,7 +133,7 @@ twTree([
 
 ## 📜 License
 
-This project is licensed under the MIT License. For more details, please refer to the [LICENSE file](https://github.com/shervin-ghajar/tailwind-tree/blob/main/packages/tailwind-tree/LICENSE).
+This project is licensed under the MIT License. For more details, please refer to the [LICENSE file](https://github.com/shervin-ghajar/tailwind-tree/blob/main/LICENSE).
 
 ---
 
