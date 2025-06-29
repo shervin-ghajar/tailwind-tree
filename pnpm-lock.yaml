@@ -9,7 +9,7 @@ dependencies:
     specifier: ^3.3.1
     version: 3.3.1
   vite:
-    specifier: ^6.3.5
+    specifier: '>=6.0.0'
     version: 6.3.5(@types/node@22.15.29)(tsx@4.19.4)
 
 devDependencies:
