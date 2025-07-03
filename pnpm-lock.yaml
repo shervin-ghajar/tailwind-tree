@@ -5,12 +5,14 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  tailwind-merge:
-    specifier: ^3.3.1
-    version: 3.3.1
   vite:
     specifier: '>=6.0.0'
     version: 6.3.5(@types/node@22.15.29)(tsx@4.19.4)
+
+optionalDependencies:
+  tailwind-merge:
+    specifier: '>=3.0.0'
+    version: 3.3.1
 
 devDependencies:
   '@babel/generator':
@@ -1885,7 +1887,9 @@ packages:
 
   /tailwind-merge@3.3.1:
     resolution: {integrity: sha512-gBXpgUm/3rp1lMZZrM/w7D8GKqshif0zAymAhbCyIt8KMe+0v9DQ7cdYLR4FHH/cKpdTXb+A/tKKU3eolfsI+g==}
+    requiresBuild: true
     dev: false
+    optional: true
 
   /tinyglobby@0.2.14:
     resolution: {integrity: sha512-tX5e7OM1HnYr2+a2C/4V0htOcSQcoSTH9KgJnVvNm5zm/cyEWKJ7j7YutsH9CxMdtOkkLFy2AHrMci9IM8IPZQ==}
