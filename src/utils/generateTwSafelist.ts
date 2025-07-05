@@ -6,7 +6,7 @@ import path from 'path';
 import { twTreeRegex } from '../constants';
 import { twTree } from './twTree';
 
-const consumerSafelistPath = path.resolve(process.cwd(), 'tw-safelist.js'); // <-- output in consumer root
+const consumerSafelistPath = path.resolve(process.cwd(), 'tw-safelist.js'); // output in consumer root
 
 // Collect all source files recursively
 const getAllSourceFiles = (dir: string): string[] => {
