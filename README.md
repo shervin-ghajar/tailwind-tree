@@ -1,6 +1,6 @@
-<div align="center" style="background: white;border-radius: 10px;">
+<div align="center">
     <a href="https://github.com/shervin-ghajar/tailwind-tree">
-        <img src="https://raw.githubusercontent.com/shervin-ghajar/tailwind-tree/main/src/assets/logo-with-title-w350.png" alt="tailwind-tree" style="max-width: 100%;height: 350px;">
+        <img src="https://raw.githubusercontent.com/shervin-ghajar/tailwind-tree/main/src/assets/logo-with-title-w350.png" alt="tailwind-tree">
     </a>
 </div>
 
