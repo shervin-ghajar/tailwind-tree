@@ -1,4 +1,8 @@
-# 🌲 tailwind-tree
+<div align="center">
+    <a href="https://github.com/shervin-ghajar/tailwind-tree">
+        <img src="https://raw.githubusercontent.com/shervin-ghajar/tailwind-tree/main/src/assets/logo-with-title.png" alt="tailwind-tree" height="400px" />
+    </a>
+</div>
 
 **Tailwind Tree** is a utility designed for writing deeply nested, composable Tailwind CSS classes using a simple and expressive tree structure. It simplifies the management of complex class combinations with responsive and interactive variants, supporting both **Tailwind** **v3** and **v4**.
 
@@ -31,10 +35,10 @@ yarn add tailwind-tree
 
 Instead of manually writing long variant chains, you can utilize `twTree` for a more streamlined approach:
 
-### Manual Approach
+### Previous Approach
 
 ```html
-<div class="bg-red-500 text-white hover:bg-blue-500 md:focus:text-xl" />
+<div class="bg-amber-500 text-nowrap hover:bg-slate-600 hover:text-clip md:focus:text-blue-700" />
 ```
 
 ### Using `twTree`
@@ -46,7 +50,7 @@ import { twTree } from "tailwind-tree";
   className={twTree([
     "bg-red-500 text-white",
     {
-      hover: ["bg-blue-500"],
+      hover: ['bg-slate-600', 'text-clip'],
       md: [{ focus: ["text-xl"] }],
     },
   ])}
@@ -56,8 +60,12 @@ import { twTree } from "tailwind-tree";
 This will produce the following output:
 
 ```ts
-'bg-red-500 text-white hover:bg-blue-500 md:focus:text-xl';
+'bg-amber-500 text-nowrap hover:bg-slate-600 hover:text-clip md:focus:text-blue-700';
 ```
+
+### Integration with `tailwind-merge`
+
+The `twTree` function relies on [tailwind-merge](https://www.npmjs.com/package/tailwind-merge) to efficiently merge Tailwind CSS classes in JS without style conflicts. This means that you do not need to manually handle merging; it is automatically taken care of within the `twTree` implementation.
 
 ---
 
@@ -109,25 +117,6 @@ export default {
 ```
 
 This setup allows Tailwind to parse `twTree(...)` usage directly and **precisely extract nested classes**, eliminating redundancy.
-
----
-
-## 🧪 Example
-
-```tsx
-twTree([
-  'bg-amber-500 text-nowrap',
-  {
-    hover: ['bg-slate-600', 'text-clip'],
-    md: {
-      focus: ['text-blue-700'],
-    },
-  },
-]);
-
-// Result:
-// "bg-amber-500 text-nowrap hover:bg-slate-600 hover:text-clip md:focus:text-blue-700"
-```
 
 ---
 
