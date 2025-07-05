@@ -1,7 +1,7 @@
 {
   "name": "tailwind-tree",
   "private": false,
-  "version": "0.1.33",
+  "version": "0.1.34",
   "description": "A utility for writing deeply nested and composable Tailwind CSS classes using an expressive tree structure, supporting responsive and interactive variants for Tailwind v3 and v4.",
   "author": {
     "name": "Shervin Ghajar",
