@@ -49,9 +49,6 @@
     "tailwind-merge": ">=3.0.0"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^4.1.1",
-    "prettier": "^3.5.3",
-    "prettier-plugin-organize-imports": "^4.1.0",
     "@babel/generator": "^7.27.5",
     "@babel/parser": "^7.27.5",
     "@babel/traverse": "^7.27.4",
@@ -59,7 +56,9 @@
     "@eslint/js": "^9.25.0",
     "@rollup/plugin-commonjs": "^28.0.3",
     "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.2",
+    "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@types/babel__generator": "^7.27.0",
     "@types/babel__traverse": "^7.20.7",
     "@types/node": "^22.15.29",
@@ -71,6 +70,8 @@
     "globals": "^16.0.0",
     "husky": "^9.1.7",
     "json5": "^2.2.3",
+    "prettier": "^3.5.3",
+    "prettier-plugin-organize-imports": "^4.1.0",
     "rollup": "^4.41.1",
     "rollup-plugin-delete": "^3.0.1",
     "rollup-plugin-dts": "^6.2.1",

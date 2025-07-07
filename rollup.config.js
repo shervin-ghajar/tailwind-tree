@@ -1,5 +1,6 @@
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
+import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import del from 'rollup-plugin-delete';
 import dts from 'rollup-plugin-dts';
@@ -26,6 +27,7 @@ export default [
       resolve(),
       commonjs(),
       typescript({ tsconfig: './tsconfig.json' }),
+      terser(),
     ],
   },
 
@@ -40,7 +42,7 @@ export default [
       sourcemap: false,
       entryFileNames: '[name].js',
     },
-    plugins: [resolve(), commonjs(), typescript({ tsconfig: './tsconfig.json' })],
+    plugins: [resolve(), commonjs(), typescript({ tsconfig: './tsconfig.json' }), terser()],
   },
 
   // 3. Type declarations for main index.ts + tw-safelist + node + getTwSafelist
