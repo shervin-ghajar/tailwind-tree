@@ -9,17 +9,23 @@ import { twMerge } from 'tailwind-merge';
  * twTree([
  *   "bg-red-500 text-white",
  *   { hover: ["bg-blue-500"], md: [{ focus: ["text-xl"] }] }
- * ])
+ * ]);
  * // => "bg-red-500 text-white hover:bg-blue-500 md:focus:text-xl"
  * ```
  *
- * @param input - Array of Tailwind class strings or nested variant objects
- * @param prefix - Internal use for recursive variant prefixing (e.g., `hover:`)
- * @returns A space-separated string of Tailwind classes with prefixes applied
+ * @param input - Array of Tailwind class strings or nested variant objects.
+ *                Objects can nest arbitrarily deep to represent variant chains.
+ * @param options.prefix - Internal use for recursive variant prefixing (e.g., `hover:`).
+ * @param options.merge - When true (default), merges and deduplicates classes using `tailwind-merge`.
+ *                        When false, returns all classes without merging (useful for extraction/safelist).
+ * @returns A space-separated string of Tailwind classes with prefixes applied.
  */
-export function twTree<T extends string | object>(input: T[], prefix = ''): string {
+export function twTree<T extends string | object>(
+  input: T[],
+  options: { prefix?: string; merge?: boolean } = { prefix: '', merge: true },
+): string {
   const classes: string[] = [];
-
+  const prefix = options.prefix ?? '';
   for (const item of input) {
     if (typeof item === 'string') {
       const tokens = item.trim().split(/\s+/);
@@ -31,12 +37,15 @@ export function twTree<T extends string | object>(input: T[], prefix = ''): stri
       for (const variant in item) {
         const nestedClasses = item[variant];
         if (Array.isArray(nestedClasses)) {
-          const nested = twTree(nestedClasses, `${prefix}${variant}:`);
+          const nested = twTree(nestedClasses, {
+            prefix: prefix ? `${prefix}${variant}:` : '',
+            merge: options.merge,
+          });
           classes.push(nested);
         }
       }
     }
   }
 
-  return twMerge(classes.join(' '));
+  return options.merge ? twMerge(classes.join(' ')) : classes.join(' ');
 }

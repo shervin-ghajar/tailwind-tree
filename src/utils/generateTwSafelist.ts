@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { parse } from '@typescript-eslint/typescript-estree';
 import chalk from 'chalk';
 import fs from 'fs';
-import JSON5 from 'json5';
 import path from 'path';
-import { twTreeRegex } from '../constants';
-import { twTree } from './twTree';
 
-const consumerSafelistPath = path.resolve(process.cwd(), 'tw-safelist.js'); // <-- output in consumer root
+import { extractClassesFromNode } from './extractClassesFromNode';
+import { traverse } from './traverse';
+
+const consumerSafelistPath = path.resolve(process.cwd(), 'tw-safelist.js'); // output in consumer root
 
 // Collect all source files recursively
 const getAllSourceFiles = (dir: string): string[] => {
@@ -32,27 +34,42 @@ const getAllSourceFiles = (dir: string): string[] => {
 };
 
 // Extract twTree classes from all files
-const collectUsedClasses = (sourceFiles: string[]): Set<string> => {
+export const collectUsedClasses = (sourceFiles: string[]): Set<string> => {
   const usedClasses = new Set<string>();
 
   for (const filePath of sourceFiles) {
-    const content = fs.readFileSync(filePath, 'utf8');
-    let match;
-
-    while ((match = twTreeRegex.exec(content)) !== null) {
-      try {
-        const raw = match[1];
-        if (typeof raw === 'string' && raw.trim().length > 0) {
-          const parsed = JSON5.parse(raw);
-          const flattened = twTree(parsed).split(' ');
-          flattened.forEach((cls) => cls && usedClasses.add(cls.trim()));
-        }
-      } catch (err) {
-        console.warn(chalk.yellow(`⚠️  Failed to parse twTree in file: ${filePath}`));
-        console.warn(chalk.gray(match[0]));
-        console.warn(err);
-      }
+    let content: string;
+    try {
+      content = fs.readFileSync(filePath, 'utf8');
+    } catch (err) {
+      console.warn(chalk.yellow(`⚠️  Failed to read file: ${filePath}`));
+      continue;
     }
+
+    let ast;
+    try {
+      ast = parse(content, {
+        range: false,
+        jsx: true,
+      });
+    } catch (err) {
+      console.warn(chalk.yellow(`⚠️  Failed to parse AST for file: ${filePath}`));
+      continue;
+    }
+    traverse(ast, (node) => {
+      if (
+        node.type === 'CallExpression' &&
+        node.callee.type === 'Identifier' &&
+        node.callee.name === 'twTree' &&
+        node.arguments.length > 0
+      ) {
+        const arg = node.arguments[0];
+        const classes = extractClassesFromNode(arg);
+        classes.forEach((cls) => {
+          if (cls) usedClasses.add(cls.trim());
+        });
+      }
+    });
   }
 
   return usedClasses;

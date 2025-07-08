@@ -1,37 +1,46 @@
-import JSON5 from 'json5';
+import { parse } from '@typescript-eslint/typescript-estree';
+import chalk from 'chalk';
+
 import { fallbackClassRegex, twTreeRegex } from '../constants';
+import { extractClassesFromNode } from './extractClassesFromNode';
+import { traverse } from './traverse';
 import { twTree } from './twTree';
 
 /**
  * Extracts all Tailwind classes from a source string.
- * This includes:
- *  1. Classes defined via `twTree([...])` nested syntax
- *  2. Traditional string-based class detection (standard Tailwind strategy)
- *
- * This function is compatible with Tailwind v3 `content.extract` for custom class detection.
- *
- * @param content - The source code string (e.g. from .tsx/.js/.vue files)
- * @returns Array of unique Tailwind class names used in the file
+ * Includes classes from twTree calls without merging,
+ * plus fallback regex detection for standard Tailwind classes.
  */
 export function extractTwTree(content: string): string[] {
   const classNames = new Set<string>();
   const twTreeMatches = [...content.matchAll(twTreeRegex)];
+
   if (twTreeMatches.length > 0) {
-    // 1. Extract classes from twTree([...])
-    for (const match of content.matchAll(twTreeRegex)) {
-      try {
-        const parsed = JSON5.parse(match[1]);
-        const result = twTree(parsed);
-        result
-          .split(' ')
-          .filter(Boolean)
-          .forEach((cls) => classNames.add(cls));
-      } catch (err) {
-        console.warn('⚠️ Failed to parse twTree(...) in extract.', err);
-      }
+    try {
+      const ast = parse(content, {
+        range: false,
+        jsx: true,
+      });
+      traverse(ast, (node) => {
+        if (
+          node.type === 'CallExpression' &&
+          node.callee.type === 'Identifier' &&
+          node.callee.name === 'twTree' &&
+          node.arguments.length > 0
+        ) {
+          const arg = node.arguments[0];
+          const classes = extractClassesFromNode(arg);
+          const flattened = twTree(classes, { merge: false });
+          flattened
+            .split(' ')
+            .filter(Boolean)
+            .forEach((cls) => classNames.add(cls));
+        }
+      });
+    } catch (err) {
+      console.warn(chalk.yellow('⚠️ Babel parse failed, falling back to regex extraction.'), err);
     }
   } else {
-    // 2. Fallback to default class detection (standard Tailwind strategy)
     const fallbackMatches = [...content.matchAll(fallbackClassRegex)];
     fallbackMatches.forEach((m) => {
       if (m[0]) classNames.add(m[0]);
