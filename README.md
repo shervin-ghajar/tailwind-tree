@@ -28,7 +28,7 @@ pnpm add tailwind-tree
 npm install tailwind-tree
 # or
 yarn add tailwind-tree
-````
+```
 
 ---
 
@@ -93,11 +93,10 @@ twTree([
 
 This complex example supports:
 
-* Nested variant objects (`hover:active`, `focus:visible`, etc.)
-* Conditional expressions with ternaries
-* Template literals mixed with strings
-* Multiple levels of nesting and arrays
-
+- Nested variant objects (`hover:active`, `focus:visible`, etc.)
+- Conditional expressions with ternaries
+- Template literals mixed with strings
+- Multiple levels of nesting and arrays
 
 ### Integration with `tailwind-merge`
 
@@ -114,7 +113,7 @@ With the removal of `content.extract` in Tailwind v4, the `tailwind-tree` librar
 ```ts
 // vite.config.ts
 import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite'
+import tailwindcss from '@tailwindcss/vite';
 import { twTreePlugin } from 'tailwind-tree/vite'; // <--- import twTreePlugin()
 import { defineConfig } from 'vite';
 
@@ -122,7 +121,7 @@ export default defineConfig({
   plugins: [
     react(),
     twTreePlugin(), // <--- add twTreePlugin()
-    tailwindcss()
+    tailwindcss(),
   ],
 });
 ```
@@ -160,6 +159,7 @@ export default {
 This setup allows Tailwind to parse `twTree(...)` usage directly and **precisely extract nested classes**, eliminating redundancy.
 
 ---
+
 You're absolutely right — if `twTree` accepts options (e.g., for customizing behavior like merging, flattening, or variants), the README should clearly document them. Here's how you can add an **"Options"** section under the usage docs.
 
 ---
@@ -174,24 +174,18 @@ twTree(input, options?)
 
 ### Available Options
 
-| Option      | Type      | Default | Description                                                             |
-| ----------- | --------- | ------- | ----------------------------------------------------------------------- |
-| `merge`     | `boolean` | `true`  | Whether to apply `tailwind-merge` to merge conflicting utility classes. |
-| `prefix`    | `string` |  `""`   | Adds a static prefix to all class names (e.g., "tw-" → tw-bg-red-500).                   |
+| Option   | Type      | Default | Description                                                             |
+| -------- | --------- | ------- | ----------------------------------------------------------------------- |
+| `merge`  | `boolean` | `true`  | Whether to apply `tailwind-merge` to merge conflicting utility classes. |
+| `prefix` | `string`  | `""`    | Adds a static prefix to all class names (e.g., "tw-" → tw-bg-red-500).  |
 
 ### Example Usage
 
 ```ts
-twTree(
-  [
-    'bg-red-500',
-    { hover: ['bg-red-600'], focus: ['bg-red-700'] },
-  ],
-  {
-    merge: false,
-    prefix: 'tw-',
-  }
-);
+twTree(['bg-red-500', { hover: ['bg-red-600'], focus: ['bg-red-700'] }], {
+  merge: false,
+  prefix: 'tw-',
+});
 ```
 
 ### Output (with merge: false)
@@ -206,7 +200,6 @@ twTree(
 
 ---
 
-
 ## 📜 License
 
 This project is licensed under the MIT License. For more details, please refer to the [LICENSE file](https://github.com/shervin-ghajar/tailwind-tree/blob/main/LICENSE).
@@ -217,3 +210,4 @@ Made with 💙 by [@shervin-ghajar](https://github.com/shervin-ghajar)
 
 ```
 
+```
