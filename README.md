@@ -28,7 +28,7 @@ pnpm add tailwind-tree
 npm install tailwind-tree
 # or
 yarn add tailwind-tree
-```
+````
 
 ---
 
@@ -64,6 +64,41 @@ This will produce the following output:
 'bg-amber-500 text-nowrap hover:bg-slate-600 hover:text-clip md:focus:text-blue-700';
 ```
 
+### Complex Nested Example
+
+```ts
+twTree([
+  'text-white',
+  isActive ? `bg-green-500` : 'bg-green-300',
+  {
+    hover: [
+      'underline',
+      'opacity-50',
+      isFocused ? 'bg-blue-200' : `bg-blue-100`,
+      {
+        active: ['scale-105', `font-semibold`],
+      },
+    ],
+    focus: [
+      'ring-2',
+      {
+        visible: ['ring-green-500', isError ? `ring-red-500` : 'ring-yellow-500'],
+      },
+    ],
+  },
+  anotherCondition ? 'p-4' : 'p-2',
+  ['font-bold', `tracking-wide`],
+]);
+```
+
+This complex example supports:
+
+* Nested variant objects (`hover:active`, `focus:visible`, etc.)
+* Conditional expressions with ternaries
+* Template literals mixed with strings
+* Multiple levels of nesting and arrays
+
+
 ### Integration with `tailwind-merge`
 
 The `twTree` function relies on [tailwind-merge](https://www.npmjs.com/package/tailwind-merge) to efficiently merge Tailwind CSS classes in JS without style conflicts. This means that you do not need to manually handle merging; it is automatically taken care of within the `twTree` implementation.
@@ -79,11 +114,16 @@ With the removal of `content.extract` in Tailwind v4, the `tailwind-tree` librar
 ```ts
 // vite.config.ts
 import react from '@vitejs/plugin-react';
-import { twTreePlugin } from 'tailwind-tree/node';
+import tailwindcss from '@tailwindcss/vite'
+import { twTreePlugin } from 'tailwind-tree/vite'; // <--- import twTreePlugin()
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  plugins: [twTreePlugin(), react()],
+  plugins: [
+    react(),
+    twTreePlugin(), // <--- add twTreePlugin()
+    tailwindcss()
+  ],
 });
 ```
 
@@ -120,6 +160,52 @@ export default {
 This setup allows Tailwind to parse `twTree(...)` usage directly and **precisely extract nested classes**, eliminating redundancy.
 
 ---
+You're absolutely right — if `twTree` accepts options (e.g., for customizing behavior like merging, flattening, or variants), the README should clearly document them. Here's how you can add an **"Options"** section under the usage docs.
+
+---
+
+## ⚙️ Options
+
+The `twTree` function supports an optional second parameter to customize its behavior:
+
+```ts
+twTree(input, options?)
+```
+
+### Available Options
+
+| Option      | Type      | Default | Description                                                             |
+| ----------- | --------- | ------- | ----------------------------------------------------------------------- |
+| `merge`     | `boolean` | `true`  | Whether to apply `tailwind-merge` to merge conflicting utility classes. |
+| `prefix`    | `string` |  `""`   | Adds a static prefix to all class names (e.g., "tw-" → tw-bg-red-500).                   |
+
+### Example Usage
+
+```ts
+twTree(
+  [
+    'bg-red-500',
+    { hover: ['bg-red-600'], focus: ['bg-red-700'] },
+  ],
+  {
+    merge: false,
+    prefix: 'tw-',
+  }
+);
+```
+
+### Output (with merge: false)
+
+```
+"tw-bg-red-500 tw-hover:bg-red-600 tw-focus:bg-red-700"
+```
+
+---
+
+> 🧠 **Note:** When `merge: false`, classes will not be deduplicated or resolved for conflicts.
+
+---
+
 
 ## 📜 License
 
@@ -129,4 +215,5 @@ This project is licensed under the MIT License. For more details, please refer t
 
 Made with 💙 by [@shervin-ghajar](https://github.com/shervin-ghajar)
 
----
+```
+
