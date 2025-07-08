@@ -207,7 +207,3 @@ This project is licensed under the MIT License. For more details, please refer t
 ---
 
 Made with 💙 by [@shervin-ghajar](https://github.com/shervin-ghajar)
-
-```
-
-```
