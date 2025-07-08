@@ -1,6 +1,6 @@
 import type { Plugin } from 'vite';
 
-import { generateTwSafelist } from './utils/generateTwSafelist';
+import { generateTwSafelist } from '../utils/generateTwSafelist';
 
 export function twTreePlugin(): Plugin {
   return {
