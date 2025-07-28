@@ -1,13 +1,19 @@
 {
   "name": "tailwind-tree-monorepo",
-  "private": false,
-  "version": "0.2.1",
+  "private": true,
+  "version": "0.0.0",
   "description": "A utility for writing deeply nested and composable Tailwind CSS classes using an expressive tree structure, supporting responsive and interactive variants for Tailwind v3 and v4.",
   "author": {
     "name": "Shervin Ghajar",
     "email": "ssghajar.work@gmail.com"
   },
   "homepage": "https://github.com/shervin-ghajar/tailwind-tree#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shervin-ghajar/tailwind-tree.git"
+  },
+  "license": "MIT",
+  "type": "module",
   "keywords": [
     "tailwindcss",
     "tailwind",
@@ -18,22 +24,22 @@
     "responsive",
     "design"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/shervin-ghajar/tailwind-tree.git"
-  },
-  "license": "MIT",
-  "type": "module",
   "scripts": {
-    "build": "rollup -c",
+    "build": "pnpm run build:all",
     "dev": "rollup -c -w",
-    "format": "prettier --write --cache .  --plugin=prettier-plugin-organize-imports",
+    "format": "prettier --write --cache . --plugin=prettier-plugin-organize-imports",
     "lint": "eslint .",
     "test": "npx tsx ./example/test.ts",
+    "prepare": "husky",
+    "build:all": "pnpm -r run build",
     "build:tailwind-tree": "pnpm --filter tailwind-tree run build",
     "build:extractor": "pnpm --filter @tailwind-tree/extractor run build",
     "build:plugin": "pnpm --filter @tailwind-tree/vite-plugin run build",
-    "prepare": "husky"
+
+    "publish:tailwind-tree": "cd packages/tailwind-tree && npm publish --access public",
+    "publish:extractor": "cd packages/extractor && npm publish --access public",
+    "publish:plugin": "cd packages/plugin && npm publish --access public",
+    "publish:all": "pnpm run publish:tailwind-tree && pnpm run publish:extractor && pnpm run publish:plugin"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

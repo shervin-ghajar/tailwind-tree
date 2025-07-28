@@ -49,13 +49,13 @@ export function extractTwTree({ merge = true }: Partial<{ merge: boolean }> = {}
       } catch (err) {
         console.warn(chalk.yellow('⚠️ Failed to parse AST — falling back to regex matching.'), err);
       }
+    } else {
+      // Always include fallback regex matches like class="bg-red-500"
+      const fallbackMatches = [...content.matchAll(fallbackClassRegex)];
+      fallbackMatches.forEach((m) => {
+        if (m[0]) classNames.add(m[0]);
+      });
     }
-
-    // Always include fallback regex matches like class="bg-red-500"
-    const fallbackMatches = [...content.matchAll(fallbackClassRegex)];
-    fallbackMatches.forEach((m) => {
-      if (m[0]) classNames.add(m[0]);
-    });
 
     return [...classNames];
   };

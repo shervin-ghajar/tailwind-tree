@@ -1,6 +1,6 @@
 {
   "name": "@tailwind-tree/extractor",
-  "version": "0.1.54",
+  "version": "0.1.56",
   "description": "Tailwind CSS class extractor for twTree() — enables nested class parsing in Tailwind v3 projects.",
   "author": "Shervin Ghajar <ssghajar.work@gmail.com>",
   "license": "MIT",

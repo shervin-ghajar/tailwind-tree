@@ -38,7 +38,7 @@ export function twTree<T extends string | object>(
         const nestedClasses = item[variant];
         if (Array.isArray(nestedClasses)) {
           const nested = twTree(nestedClasses, {
-            prefix: prefix ? `${prefix}${variant}:` : '',
+            prefix: prefix ? `${prefix}${variant}:` : `${variant}:`,
             merge: options.merge,
           });
           classes.push(nested);
@@ -46,6 +46,5 @@ export function twTree<T extends string | object>(
       }
     }
   }
-
   return options.merge ? twMerge(classes.join(' ')) : classes.join(' ');
 }
