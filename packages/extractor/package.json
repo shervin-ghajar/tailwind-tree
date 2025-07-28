@@ -1,29 +1,32 @@
 {
   "name": "@tailwind-tree/extractor",
-  "private": false,
-  "version": "0.2.1",
-  "description": "A utility for writing deeply nested and composable Tailwind CSS classes using an expressive tree structure, supporting responsive and interactive variants for Tailwind v3 and v4.",
+  "version": "0.1.53",
+  "description": "Tailwind CSS class extractor for twTree() — enables nested class parsing in Tailwind v3 projects.",
   "author": {
     "name": "Shervin Ghajar",
     "email": "ssghajar.work@gmail.com"
   },
-  "homepage": "https://github.com/shervin-ghajar/tailwind-tree#readme",
-  "keywords": [
-    "tailwindcss",
-    "tailwind",
-    "tailwind-merge",
-    "style",
-    "css",
-    "utility-first",
-    "responsive",
-    "design"
-  ],
+  "license": "MIT",
+  "private": false,
+  "type": "module",
+  "homepage": "https://github.com/shervin-ghajar/tailwind-tree/tree/main/packages/extractor#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shervin-ghajar/tailwind-tree.git"
+    "url": "https://github.com/shervin-ghajar/tailwind-tree.git",
+    "directory": "packages/extractor"
   },
-  "license": "MIT",
-  "type": "module",
+  "keywords": [
+    "css",
+    "design",
+    "tailwindcss",
+    "tailwind",
+    "twTree",
+    "extractor",
+    "tailwind-tree",
+    "tailwind-v3",
+    "responsive",
+    "utility-first"
+  ],
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
@@ -32,20 +35,20 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "format": "prettier --write --cache .  --plugin=prettier-plugin-organize-imports",
-    "lint": "eslint .",
-    "test":"cd src/example && npx tsx test.ts"
-  },
-  "dependencies": {
-    "@tailwind-tree/shared": "workspace:*",
-    "chalk": "^5.4.1"
-  },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
-  ]
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "format": "prettier --write --cache . --plugin=prettier-plugin-organize-imports",
+    "lint": "eslint .",
+    "test": "cd src/example && npx tsx test.ts"
+  },
+  "dependencies": {
+    "@tailwind-tree/shared": "workspace:*",
+    "chalk": "^5.4.1"
+  }
 }

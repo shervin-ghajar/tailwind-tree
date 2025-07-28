@@ -1,32 +1,34 @@
 {
   "name": "@tailwind-tree/vite-plugin",
+  "version": "0.1.50",
   "private": false,
-  "version": "0.1.0",
-  "description": "A utility for writing deeply nested and composable Tailwind CSS classes using an expressive tree structure, supporting responsive and interactive variants for Tailwind v3 and v4.",
+  "description": "Vite plugin for Tailwind Tree — enables Tailwind v4 to recognize safelisted classes from twTree() usage.",
   "author": {
     "name": "Shervin Ghajar",
     "email": "ssghajar.work@gmail.com"
   },
-  "homepage": "https://github.com/shervin-ghajar/tailwind-tree#readme",
-  "keywords": [
-    "tailwindcss",
-    "tailwind",
-    "tailwind-merge",
-    "style",
-    "css",
-    "utility-first",
-    "responsive",
-    "design",
-    "vite",
-    "plugin"
-  ],
-  "main": "dist/index.js",
+  "license": "MIT",
   "type": "module",
+  "homepage": "https://github.com/shervin-ghajar/tailwind-tree/tree/main/packages/plugin#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shervin-ghajar/tailwind-tree.git"
+    "url": "https://github.com/shervin-ghajar/tailwind-tree.git",
+    "directory": "packages/vite-plugin"
   },
-  "license": "MIT",
+  "keywords": [
+    "css",
+    "design",
+    "tailwindcss",
+    "tailwind",
+    "tailwind-tree",
+    "twTree",
+    "vite",
+    "vite-plugin",
+    "plugin",
+    "utility-first",
+    "safelist",
+    "tailwind-v4"
+  ],
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
@@ -35,10 +37,15 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "format": "prettier --write --cache .  --plugin=prettier-plugin-organize-imports",
+    "format": "prettier --write --cache . --plugin=prettier-plugin-organize-imports",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -50,10 +57,5 @@
   },
   "peerDependencies": {
     "vite": ">=6.0.0"
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ]
+  }
 }
