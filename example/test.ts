@@ -1,6 +1,6 @@
-import { extractTwTree } from '../extractor/index';
-import { generateTwSafelist } from '../utils/generateTwSafelist';
-import { twTree } from '../utils/twTree';
+import { extractTwTree } from '../packages/extractor/src';
+import { generateTwSafelist } from '../packages/shared/src/utils/generateTwSafelist';
+import { twTree } from '../packages/tailwind-tree/src';
 
 // Example source string containing twTree usage
 const exampleSource = `

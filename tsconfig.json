@@ -8,8 +8,22 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "tailwind-tree/*": ["./packages/tailwind-tree/src/*"],
+      "@tailwind-tree/shared/*": ["./packages/shared/src/*"],
+      "@tailwind-tree/plugin/*": ["./packages/plugin/src/*"],
+      "@tailwind-tree/extractor/*": ["./packages/extractor/src/*"]
+    }
   },
   "exclude": ["node_modules", "dist"],
-  "include": ["src/**/*", "test.js", "src/example/test.ts"]
+  "include": [
+    "src/**/*",
+    "**/*.ts",
+    "**/*.tsx",
+    "packages/shared/src/**/*",
+    "packages/tailwind-tree/src/**/*",
+    "packages/plugin/src/**/*",
+    "packages/extractor/src/**/*"
+  ]
 }

@@ -1,6 +1,5 @@
+import { generateTwSafelist } from '@tailwind-tree/shared/utils/generateTwSafelist';
 import type { Plugin } from 'vite';
-
-import { generateTwSafelist } from '../utils/generateTwSafelist';
 
 export function twTreePlugin(): Plugin {
   return {

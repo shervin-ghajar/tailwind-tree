@@ -1,5 +1,5 @@
 {
-  "name": "tailwind-tree-monorepo",
+  "name": "tailwind-tree",
   "private": false,
   "version": "0.2.1",
   "description": "A utility for writing deeply nested and composable Tailwind CSS classes using an expressive tree structure, supporting responsive and interactive variants for Tailwind v3 and v4.",
@@ -24,20 +24,28 @@
   },
   "license": "MIT",
   "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "format": "prettier --write --cache .  --plugin=prettier-plugin-organize-imports",
     "lint": "eslint .",
-    "test": "npx tsx ./example/test.ts",
-    "build:tailwind-tree": "pnpm --filter tailwind-tree run build",
-    "build:extractor": "pnpm --filter @tailwind-tree/extractor run build",
-    "build:plugin": "pnpm --filter @tailwind-tree/vite-plugin run build",
-    "prepare": "husky"
+    "test":"cd src/example && npx tsx test.ts"
+  },
+  "dependencies": {
+    "@tailwind-tree/shared": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
-    "@rollup/plugin-alias": "^5.1.1",
     "@rollup/plugin-commonjs": "^28.0.3",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
@@ -48,7 +56,6 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
-    "husky": "^9.1.7",
     "prettier": "^3.5.3",
     "prettier-plugin-organize-imports": "^4.1.0",
     "rollup": "^4.41.1",

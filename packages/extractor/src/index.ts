@@ -1,10 +1,9 @@
+import { fallbackClassRegex, twTreeRegex } from '@tailwind-tree/shared/constants/index';
+import { extractClassesFromNode } from '@tailwind-tree/shared/utils/extractClassesFromNode';
+import { parseProgram } from '@tailwind-tree/shared/utils/parser';
+import { traverse } from '@tailwind-tree/shared/utils/traverse';
+import { twTree } from '@tailwind-tree/shared/utils/twTree';
 import chalk from 'chalk';
-
-import { fallbackClassRegex, twTreeRegex } from '../constants';
-import { extractClassesFromNode } from '../utils/extractClassesFromNode';
-import { parseProgram } from '../utils/parser';
-import { traverse } from '../utils/traverse';
-import { twTree } from '../utils/twTree';
 
 /**
  * Creates a Tailwind class extractor from source code.
