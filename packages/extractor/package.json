@@ -2,17 +2,13 @@
   "name": "@tailwind-tree/extractor",
   "version": "0.1.53",
   "description": "Tailwind CSS class extractor for twTree() — enables nested class parsing in Tailwind v3 projects.",
-  "author": {
-    "name": "Shervin Ghajar",
-    "email": "ssghajar.work@gmail.com"
-  },
+  "author": "Shervin Ghajar <ssghajar.work@gmail.com>",
   "license": "MIT",
-  "private": false,
   "type": "module",
   "homepage": "https://github.com/shervin-ghajar/tailwind-tree/tree/main/packages/extractor#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shervin-ghajar/tailwind-tree.git",
+    "url": "git+https://github.com/shervin-ghajar/tailwind-tree.git",
     "directory": "packages/extractor"
   },
   "keywords": [
@@ -27,6 +23,9 @@
     "responsive",
     "utility-first"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
@@ -50,5 +49,10 @@
   "dependencies": {
     "@tailwind-tree/shared": "workspace:*",
     "chalk": "^5.4.1"
+  },
+  "main": "eslint.config.js",
+  "devDependencies": {},
+  "bugs": {
+    "url": "https://github.com/shervin-ghajar/tailwind-tree/issues"
   }
 }

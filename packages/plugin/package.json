@@ -1,7 +1,6 @@
 {
   "name": "@tailwind-tree/vite-plugin",
   "version": "0.1.50",
-  "private": false,
   "description": "Vite plugin for Tailwind Tree — enables Tailwind v4 to recognize safelisted classes from twTree() usage.",
   "author": {
     "name": "Shervin Ghajar",
@@ -29,6 +28,9 @@
     "safelist",
     "tailwind-v4"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
