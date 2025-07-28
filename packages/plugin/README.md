@@ -1,4 +1,3 @@
-
 # @tailwind-tree/vite-plugin
 
 Vite plugin for [tailwind-tree](https://www.npmjs.com/package/tailwind-tree)  
@@ -21,7 +20,7 @@ pnpm add -D @tailwind-tree/vite-plugin
 yarn add -D @tailwind-tree/vite-plugin
 # or
 npm install -D @tailwind-tree/vite-plugin
-````
+```
 
 ---
 
@@ -53,9 +52,9 @@ This configuration ensures that **Tailwind CSS v4 includes all classes generated
 
 At build time, `twTreePlugin()`:
 
-* Scans your project source for all `twTree(...)` calls
-* Resolves the nested variants and conditions
-* Generates the full list of Tailwind utility classes into separate file in root directory as `tw-safelist` that will be scanned by Tailwind compiler and picked as safelist. 
+- Scans your project source for all `twTree(...)` calls
+- Resolves the nested variants and conditions
+- Generates the full list of Tailwind utility classes into separate file in root directory as `tw-safelist` that will be scanned by Tailwind compiler and picked as safelist.
 
 This simulates how extractors worked in v3 — but in a way that’s **compatible with Tailwind v4’s new architecture**.
 
@@ -70,6 +69,5 @@ This simulates how extractors worked in v3 — but in a way that’s **compatibl
 
 ## 🔗 Related
 
-* [`tailwind-tree`](https://www.npmjs.com/package/tailwind-tree) — Class composition utility
-* [`@tailwind-tree/extractor`](https://www.npmjs.com/package/@tailwind-tree/extractor) — Tailwind v3 extractor
-
+- [`tailwind-tree`](https://www.npmjs.com/package/tailwind-tree) — Class composition utility
+- [`@tailwind-tree/extractor`](https://www.npmjs.com/package/@tailwind-tree/extractor) — Tailwind v3 extractor

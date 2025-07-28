@@ -1,4 +1,3 @@
-
 # @tailwind-tree/extractor
 
 Tailwind Tree Extractor for Tailwind CSS v3  
@@ -20,7 +19,7 @@ pnpm add -D @tailwind-tree/extractor
 yarn add -D @tailwind-tree/extractor
 # or
 npm install -D @tailwind-tree/extractor
-````
+```
 
 ---
 
@@ -60,4 +59,4 @@ This avoids bloating your final CSS file with unused classes and works even for 
 
 ## 🔗 Related
 
-* [`tailwind-tree`](https://www.npmjs.com/package/tailwind-tree): The class composition utility for deeply nested Tailwind variant structures.
+- [`tailwind-tree`](https://www.npmjs.com/package/tailwind-tree): The class composition utility for deeply nested Tailwind variant structures.

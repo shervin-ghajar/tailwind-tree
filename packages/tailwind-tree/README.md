@@ -1,4 +1,3 @@
-
 <div align="center">
   <a href="https://github.com/shervin-ghajar/tailwind-tree">
     <img src="https://raw.githubusercontent.com/shervin-ghajar/tailwind-tree/packages/shared/src/assets/logo-with-title.png" alt="tailwind-tree" style="max-width: 100%; height: 350px;">
@@ -33,7 +32,7 @@ pnpm add tailwind-tree
 npm install tailwind-tree
 # or
 yarn add tailwind-tree
-````
+```
 
 ---
 
@@ -94,9 +93,9 @@ twTree([
 
 Supports:
 
-* Deep nesting of variants (`hover:active`, `focus:visible`)
-* Ternaries and conditional logic
-* Mixed string literals and arrays
+- Deep nesting of variants (`hover:active`, `focus:visible`)
+- Ternaries and conditional logic
+- Mixed string literals and arrays
 
 ---
 
