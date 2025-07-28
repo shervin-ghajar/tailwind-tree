@@ -30,12 +30,15 @@
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
     },
     "./vite": {
-      "import": "./dist/vite.js",
+      "import": "./dist/vite.mjs",
       "types": "./dist/vite.d.ts"
+    },
+    "./extractor": {
+      "import": "./dist/extractor.mjs",
+      "types": "./dist/extractor.d.ts"
     }
   },
   "scripts": {
@@ -43,13 +46,10 @@
     "dev": "rollup -c -w",
     "format": "prettier --write --cache .  --plugin=prettier-plugin-organize-imports",
     "lint": "eslint .",
+    "test":"cd src/example && npx tsx test.ts",
     "prepare": "husky"
   },
-  "dependencies": {
-    "@typescript-eslint/typescript-estree": "^8.36.0",
-    "@typescript-eslint/utils": "^8.36.0",
-    "tailwind-merge": ">=3.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@rollup/plugin-commonjs": "^28.0.3",
@@ -69,12 +69,20 @@
     "rollup": "^4.41.1",
     "rollup-plugin-delete": "^3.0.1",
     "rollup-plugin-dts": "^6.2.1",
+    "rollup-plugin-visualizer": "^6.0.3",
     "tslib": "^2.8.1",
-    "tsx": "^4.19.4",
+    "tsx": "^4.20.3",
     "typescript": "~5.8.3",
-    "typescript-eslint": "^8.30.1"
+    "typescript-eslint": "^8.30.1",
+    "vite": ">=6.0.0",
+    "acorn-jsx": "^5.3.2",
+    "acorn-loose": "^8.5.2",
+    "tailwind-merge": ">=3.0.0"
   },
   "peerDependencies": {
+    "acorn-jsx": "^5.3.2",
+    "acorn-loose": "^8.5.2",
+    "tailwind-merge": ">=3.0.0",
     "vite": ">=6.0.0"
   },
   "files": [

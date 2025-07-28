@@ -15,7 +15,6 @@
  */
 export function extractClassesFromNode(node: any, prefix = ''): string[] {
   if (!node) return [];
-
   switch (node.type) {
     case 'Literal':
       // Only process string literals like 'bg-red-500'
@@ -45,6 +44,11 @@ export function extractClassesFromNode(node: any, prefix = ''): string[] {
             return extractClassesFromNode(prop.value, `${prefix}${key}:`);
           }
         }
+
+        if (prop.type === 'SpreadElement') {
+          return extractClassesFromNode(prop.argument, prefix);
+        }
+
         return [];
       });
 
@@ -53,8 +57,13 @@ export function extractClassesFromNode(node: any, prefix = ''): string[] {
         ...extractClassesFromNode(node.consequent, prefix),
         ...extractClassesFromNode(node.alternate, prefix),
       ];
-
+    case 'LogicalExpression':
+      return [
+        ...extractClassesFromNode(node.left, prefix),
+        ...extractClassesFromNode(node.right, prefix),
+      ];
     default:
+      console.log(node.type, { node });
       return [];
   }
 }

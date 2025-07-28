@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { parse } from '@typescript-eslint/typescript-estree';
+/* eslint-disable no-console */
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 
 import { extractClassesFromNode } from './extractClassesFromNode';
+import { parseProgram } from './parser';
 import { traverse } from './traverse';
 
 const consumerSafelistPath = path.resolve(process.cwd(), 'tw-safelist.js'); // output in consumer root
@@ -41,19 +41,18 @@ export const collectUsedClasses = (sourceFiles: string[]): Set<string> => {
     let content: string;
     try {
       content = fs.readFileSync(filePath, 'utf8');
-    } catch (err) {
+    } catch {
       console.warn(chalk.yellow(`⚠️  Failed to read file: ${filePath}`));
       continue;
     }
 
-    let ast;
+    if (!/\btwTree\s*\(/.test(content)) continue;
+
+    let ast = null;
     try {
-      ast = parse(content, {
-        range: false,
-        jsx: true,
-      });
+      ast = parseProgram(content, filePath);
     } catch (err) {
-      console.warn(chalk.yellow(`⚠️  Failed to parse AST for file: ${filePath}`));
+      console.warn(chalk.yellow(`⚠️  Failed to parse AST for file: ${filePath}`, err));
       continue;
     }
     traverse(ast, (node) => {
@@ -65,9 +64,7 @@ export const collectUsedClasses = (sourceFiles: string[]): Set<string> => {
       ) {
         const arg = node.arguments[0];
         const classes = extractClassesFromNode(arg);
-        classes.forEach((cls) => {
-          if (cls) usedClasses.add(cls.trim());
-        });
+        classes.forEach((cls) => cls && usedClasses.add(cls.trim()));
       }
     });
   }
@@ -98,7 +95,7 @@ const writeSafelistToFile = (filePath: string, classes: string[]): void => {
 export const generateTwSafelist = async () => {
   try {
     const files = getAllSourceFiles(process.cwd());
-    const classes = collectUsedClasses(files);
+    const classes = await collectUsedClasses(files);
     writeSafelistToFile(consumerSafelistPath, [...classes]);
   } catch (error) {
     console.error('❌ Error generating tw-safelist:', error);

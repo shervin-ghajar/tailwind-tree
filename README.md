@@ -1,8 +1,14 @@
 <div align="center">
     <a href="https://github.com/shervin-ghajar/tailwind-tree">
-        <img src="https://raw.githubusercontent.com/shervin-ghajar/tailwind-tree/main/src/assets/logo-with-title.png" alt="tailwind-tree" style="max-width: 100%;height: 350px;">
+        <img src="https://raw.githubusercontent.com/shervin-ghajar/tailwind-tree/main/src/assets/logo-with-title.png" alt="tailwind-tree" style="max-width: 100%; height: 350px;">
     </a>
 </div>
+
+# Tailwind Tree
+
+[![npm version](https://img.shields.io/npm/v/tailwind-tree.svg)](https://www.npmjs.com/package/tailwind-tree)
+[![downloads](https://img.shields.io/npm/dm/tailwind-tree.svg)](https://www.npmjs.com/package/tailwind-tree)
+[![license](https://img.shields.io/npm/l/tailwind-tree.svg)](LICENSE)
 
 **Tailwind Tree** is a utility designed for writing deeply nested, composable Tailwind CSS classes using a simple and expressive tree structure. It simplifies the management of complex class combinations with responsive and interactive variants, supporting both **Tailwind** **v3** and **v4**.
 
