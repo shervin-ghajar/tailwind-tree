@@ -80,21 +80,11 @@ importers:
 
   packages/extractor:
     dependencies:
-      '@tailwind-tree/shared':
-        specifier: workspace:*
-        version: link:../shared
       chalk:
         specifier: ^5.4.1
         version: 5.4.1
 
   packages/plugin:
-    dependencies:
-      '@tailwind-tree/extractor':
-        specifier: workspace:*
-        version: link:../extractor
-      '@tailwind-tree/shared':
-        specifier: workspace:*
-        version: link:../shared
     devDependencies:
       vite:
         specifier: '>=6.0.0'
@@ -116,10 +106,6 @@ importers:
         version: 3.3.1
 
   packages/tailwind-tree:
-    dependencies:
-      '@tailwind-tree/shared':
-        specifier: workspace:*
-        version: link:../shared
     devDependencies:
       '@eslint/js':
         specifier: ^9.25.0

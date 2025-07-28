@@ -1,6 +1,6 @@
 {
   "name": "@tailwind-tree/vite-plugin",
-  "version": "0.1.50",
+  "version": "0.1.51",
   "description": "Vite plugin for Tailwind Tree — enables Tailwind v4 to recognize safelisted classes from twTree() usage.",
   "author": {
     "name": "Shervin Ghajar",
@@ -50,10 +50,7 @@
     "format": "prettier --write --cache . --plugin=prettier-plugin-organize-imports",
     "lint": "eslint ."
   },
-  "dependencies": {
-    "@tailwind-tree/extractor": "workspace:*",
-    "@tailwind-tree/shared": "workspace:*"
-  },
+  "dependencies": {},
   "devDependencies": {
     "vite": ">=6.0.0"
   },
