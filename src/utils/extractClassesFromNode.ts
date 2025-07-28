@@ -63,7 +63,6 @@ export function extractClassesFromNode(node: any, prefix = ''): string[] {
         ...extractClassesFromNode(node.right, prefix),
       ];
     default:
-      console.log(node.type, { node });
       return [];
   }
 }
