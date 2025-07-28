@@ -1,16 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TSESTree } from '@typescript-eslint/typescript-estree';
+import type * as ESTree from 'estree';
 
-export function traverse(node: TSESTree.Node, visit: (node: TSESTree.Node) => void) {
+export function traverse(node: ESTree.Node, visit: (node: ESTree.Node) => void) {
   visit(node);
-  for (const key in node) {
+
+  for (const key in node as any) {
     const value = (node as any)[key];
+    if (!value) continue;
+
     if (Array.isArray(value)) {
-      value.forEach((child) => {
+      for (const child of value) {
         if (child && typeof child.type === 'string') {
           traverse(child, visit);
         }
-      });
+      }
     } else if (value && typeof value.type === 'string') {
       traverse(value, visit);
     }
