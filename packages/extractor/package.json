@@ -1,0 +1,51 @@
+{
+  "name": "@tailwind-tree/extractor",
+  "private": false,
+  "version": "0.2.1",
+  "description": "A utility for writing deeply nested and composable Tailwind CSS classes using an expressive tree structure, supporting responsive and interactive variants for Tailwind v3 and v4.",
+  "author": {
+    "name": "Shervin Ghajar",
+    "email": "ssghajar.work@gmail.com"
+  },
+  "homepage": "https://github.com/shervin-ghajar/tailwind-tree#readme",
+  "keywords": [
+    "tailwindcss",
+    "tailwind",
+    "tailwind-merge",
+    "style",
+    "css",
+    "utility-first",
+    "responsive",
+    "design"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shervin-ghajar/tailwind-tree.git"
+  },
+  "license": "MIT",
+  "type": "module",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "format": "prettier --write --cache .  --plugin=prettier-plugin-organize-imports",
+    "lint": "eslint .",
+    "test":"cd src/example && npx tsx test.ts"
+  },
+  "dependencies": {
+    "@tailwind-tree/shared": "workspace:*",
+    "chalk": "^5.4.1"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
+}
