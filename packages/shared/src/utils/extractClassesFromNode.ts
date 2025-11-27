@@ -29,7 +29,6 @@ export function extractClassesFromNode(node: any, prefix = ''): string[] {
       return [];
     case 'ArrayExpression':
       return node.elements.flatMap((el: any) => extractClassesFromNode(el, prefix));
-
     case 'ObjectExpression':
       return node.properties.flatMap((prop: any) => {
         if (prop.type === 'Property') {
@@ -62,6 +61,21 @@ export function extractClassesFromNode(node: any, prefix = ''): string[] {
         ...extractClassesFromNode(node.left, prefix),
         ...extractClassesFromNode(node.right, prefix),
       ];
+    case 'LabeledStatement': {
+      const sepLabel = prefix && !prefix.endsWith(':') ? ':' : '';
+      return extractClassesFromNode(
+        node.body.expression,
+        `${prefix}${sepLabel}${node.label.name}:`,
+      );
+    }
+    case 'SequenceExpression':
+      return node.expressions.flatMap((expr: any) => extractClassesFromNode(expr, prefix));
+    case 'CallExpression':
+      // If a function returns classes inline (like tw() or twMerge())
+      return node.arguments.flatMap((arg: any) => extractClassesFromNode(arg, prefix));
+
+    case 'ParenthesizedExpression':
+      return extractClassesFromNode(node.expression, prefix);
     default:
       return [];
   }

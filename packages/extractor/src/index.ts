@@ -1,4 +1,4 @@
-import { fallbackClassRegex, twTreeRegex } from '@tailwind-tree/shared/constants/index';
+import { fallbackClassRegex } from '@tailwind-tree/shared/constants/index';
 import { extractClassesFromNode } from '@tailwind-tree/shared/utils/extractClassesFromNode';
 import { parseProgram } from '@tailwind-tree/shared/utils/parser';
 import { traverse } from '@tailwind-tree/shared/utils/traverse';
@@ -19,37 +19,41 @@ export function extractTwTree({ merge = true }: Partial<{ merge: boolean }> = {}
   return (content: string, filePath = '') => {
     console.log('extractTwTree', { content, filePath });
     const classNames = new Set<string>();
-    const hasTwTreeCall = twTreeRegex.test(content);
 
-    if (hasTwTreeCall) {
-      try {
-        const ast = parseProgram(content, filePath);
-        if (ast) {
-          traverse(ast, (node) => {
-            // Detect twTree(...) usage
-            if (
-              node.type === 'CallExpression' &&
-              node.callee.type === 'Identifier' &&
-              node.callee.name === 'twTree' &&
-              node.arguments.length > 0
-            ) {
-              const arg = node.arguments[0];
-              const extracted = extractClassesFromNode(arg);
+    try {
+      const ast = parseProgram(content, filePath);
+      console.log({ ast });
+      if (ast) {
+        traverse(ast, (node) => {
+          // Detect twTree(...) usage
+          if (
+            node.type === 'CallExpression' &&
+            node.callee.type === 'Identifier' &&
+            node.arguments.length > 0
+          ) {
+            const arg = node.arguments[0];
+            console.log('first');
+            const extracted = extractClassesFromNode(arg);
 
-              // Merge variants using twMerge if enabled
-              const flattened = twTree(extracted, { merge });
+            // Merge variants using twMerge if enabled
+            console.log({ extracted });
+            const flattened = twTree(extracted, { merge });
 
-              // Split merged string and add to Set
-              flattened
-                .split(' ')
-                .filter(Boolean)
-                .forEach((cls) => classNames.add(cls));
-            }
-          });
-        }
-      } catch (err) {
-        console.warn(chalk.yellow('⚠️ Failed to parse AST — falling back to regex matching.'), err);
+            // Split merged string and add to Set
+            flattened
+              .split(' ')
+              .filter(Boolean)
+              .forEach((cls) => classNames.add(cls));
+          } else if (node.type === 'Program') {
+            const arg = node.body[0];
+            const extracted = extractClassesFromNode(arg);
+            const flattened = twTree(extracted, { merge });
+            flattened.split(/\s+/).forEach((cls) => classNames.add(cls));
+          }
+        });
       }
+    } catch (err) {
+      console.warn(chalk.yellow('⚠️ Failed to parse AST — falling back to regex matching.'), err);
     }
 
     // Always include fallback regex matches like class="bg-red-500"
