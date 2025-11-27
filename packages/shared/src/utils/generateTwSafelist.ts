@@ -45,7 +45,7 @@ export const collectUsedClasses = (sourceFiles: string[]): Set<string> => {
       console.warn(chalk.yellow(`⚠️  Failed to read file: ${filePath}`));
       continue;
     }
-
+    console.log({ content });
     if (!/\btwTree\s*\(/.test(content)) continue;
 
     let ast = null;
