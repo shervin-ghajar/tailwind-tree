@@ -1,7 +1,6 @@
 'use strict';
 
 const fallbackClassRegex = /!?(?:[a-zA-Z0-9_-]+:)*(?:[a-zA-Z0-9_-]+)(?:\[[^\]]+\])?/g;
-const twTreeRegex = /twTree\s*\(\s*([\s\S]*?)\s*\)/g;
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
@@ -63,6 +62,17 @@ function extractClassesFromNode(node, prefix = '') {
                 ...extractClassesFromNode(node.left, prefix),
                 ...extractClassesFromNode(node.right, prefix),
             ];
+        case 'LabeledStatement': {
+            const sepLabel = prefix && !prefix.endsWith(':') ? ':' : '';
+            return extractClassesFromNode(node.body.expression, `${prefix}${sepLabel}${node.label.name}:`);
+        }
+        case 'SequenceExpression':
+            return node.expressions.flatMap((expr) => extractClassesFromNode(expr, prefix));
+        case 'CallExpression':
+            // If a function returns classes inline (like tw() or twMerge())
+            return node.arguments.flatMap((arg) => extractClassesFromNode(arg, prefix));
+        case 'ParenthesizedExpression':
+            return extractClassesFromNode(node.expression, prefix);
         default:
             return [];
     }
@@ -18475,33 +18485,38 @@ function extractTwTree({ merge = true } = {}) {
     return (content, filePath = '') => {
         console.log('extractTwTree', { content, filePath });
         const classNames = new Set();
-        const hasTwTreeCall = twTreeRegex.test(content);
-        if (hasTwTreeCall) {
-            try {
-                const ast = parseProgram(content, filePath);
-                if (ast) {
-                    traverse(ast, (node) => {
-                        // Detect twTree(...) usage
-                        if (node.type === 'CallExpression' &&
-                            node.callee.type === 'Identifier' &&
-                            node.callee.name === 'twTree' &&
-                            node.arguments.length > 0) {
-                            const arg = node.arguments[0];
-                            const extracted = extractClassesFromNode(arg);
-                            // Merge variants using twMerge if enabled
-                            const flattened = twTree(extracted, { merge });
-                            // Split merged string and add to Set
-                            flattened
-                                .split(' ')
-                                .filter(Boolean)
-                                .forEach((cls) => classNames.add(cls));
-                        }
-                    });
-                }
+        try {
+            const ast = parseProgram(content, filePath);
+            console.log({ ast });
+            if (ast) {
+                traverse(ast, (node) => {
+                    // Detect twTree(...) usage
+                    if (node.type === 'CallExpression' &&
+                        node.callee.type === 'Identifier' &&
+                        node.arguments.length > 0) {
+                        const arg = node.arguments[0];
+                        console.log('first');
+                        const extracted = extractClassesFromNode(arg);
+                        // Merge variants using twMerge if enabled
+                        console.log({ extracted });
+                        const flattened = twTree(extracted, { merge });
+                        // Split merged string and add to Set
+                        flattened
+                            .split(' ')
+                            .filter(Boolean)
+                            .forEach((cls) => classNames.add(cls));
+                    }
+                    else if (node.type === 'Program') {
+                        const arg = node.body[0];
+                        const extracted = extractClassesFromNode(arg);
+                        const flattened = twTree(extracted, { merge });
+                        flattened.split(/\s+/).forEach((cls) => classNames.add(cls));
+                    }
+                });
             }
-            catch (err) {
-                console.warn(chalk.yellow('⚠️ Failed to parse AST — falling back to regex matching.'), err);
-            }
+        }
+        catch (err) {
+            console.warn(chalk.yellow('⚠️ Failed to parse AST — falling back to regex matching.'), err);
         }
         // Always include fallback regex matches like class="bg-red-500"
         const fallbackMatches = [...content.matchAll(fallbackClassRegex)];
