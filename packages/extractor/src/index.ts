@@ -17,6 +17,7 @@ import chalk from 'chalk';
  */
 export function extractTwTree({ merge = true }: Partial<{ merge: boolean }> = {}) {
   return (content: string, filePath = '') => {
+    console.log('extractTwTree', { content, filePath });
     const classNames = new Set<string>();
     const hasTwTreeCall = twTreeRegex.test(content);
 
@@ -56,7 +57,7 @@ export function extractTwTree({ merge = true }: Partial<{ merge: boolean }> = {}
     fallbackMatches.forEach((m) => {
       if (m[0]) classNames.add(m[0]);
     });
-
+    console.log('extractTwTree', [...classNames]);
     return [...classNames];
   };
 }

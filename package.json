@@ -1,7 +1,7 @@
 {
   "name": "tailwind-tree-monorepo",
   "private": false,
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A utility for writing deeply nested and composable Tailwind CSS classes using an expressive tree structure, supporting responsive and interactive variants for Tailwind v3 and v4.",
   "author": {
     "name": "Shervin Ghajar",
@@ -24,6 +24,22 @@
   },
   "license": "MIT",
   "type": "module",
+  "exports": {
+    "./tree": {
+      "import": "./packages/tailwind-tree/dist/index.mjs",
+      "require": "./packages/tailwind-tree/dist/index.cjs",
+      "types": "./packages/tailwind-tree/dist/index.d.ts"
+    },
+    "./vite-plugin": {
+      "import": "./packages/plugin/dist/index.mjs",
+      "types": "./packages/plugin/dist/index.d.ts"
+    },
+    "./extractor": {
+      "import": "./packages/extractor/dist/index.mjs",
+      "require": "./packages/extractor/dist/index.cjs",
+      "types": "./packages/extractor/dist/index.d.ts"
+    }
+  },
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
@@ -33,6 +49,7 @@
     "build:tailwind-tree": "pnpm --filter tailwind-tree run build",
     "build:extractor": "pnpm --filter @tailwind-tree/extractor run build",
     "build:plugin": "pnpm --filter @tailwind-tree/vite-plugin run build",
+    "build:all": "pnpm build:tailwind-tree && pnpm build:extractor && pnpm build:plugin",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -61,6 +78,7 @@
     "typescript-eslint": "^8.30.1"
   },
   "files": [
+    "packages",
     "dist",
     "README.md",
     "LICENSE"
