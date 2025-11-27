@@ -114,6 +114,10 @@ importers:
       tailwind-merge:
         specifier: '>=3.0.0'
         version: 3.3.1
+    devDependencies:
+      '@types/estree':
+        specifier: 1.0.8
+        version: 1.0.8
 
   packages/tailwind-tree:
     dependencies:
