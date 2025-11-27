@@ -17983,10 +17983,10 @@ function twTree(input, options = { prefix: '', merge: true }) {
                 const nestedClasses = item[variant];
                 if (Array.isArray(nestedClasses)) {
                     const nested = twTree(nestedClasses, {
-                        prefix: prefix ? `${prefix}${variant}:` : '',
+                        prefix: prefix ? `${prefix}${variant}:` : `${variant}:`,
                         merge: options.merge,
                     });
-                    classes.push(nested);
+                    classes.push(...nested.split(/\s+/));
                 }
             }
         }
