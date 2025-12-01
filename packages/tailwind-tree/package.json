@@ -30,16 +30,14 @@
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     }
   },
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "format": "prettier --write --cache .  --plugin=prettier-plugin-organize-imports",
-    "lint": "eslint .",
-    "test":"cd src/example && npx tsx test.ts"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@tailwind-tree/shared": "workspace:*"

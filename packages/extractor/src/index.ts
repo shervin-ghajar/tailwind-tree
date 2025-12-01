@@ -17,12 +17,10 @@ import chalk from 'chalk';
  */
 export function extractTwTree({ merge = true }: Partial<{ merge: boolean }> = {}) {
   return (content: string, filePath = '') => {
-    console.log('extractTwTree', { content, filePath });
     const classNames = new Set<string>();
 
     try {
       const ast = parseProgram(content, filePath);
-      console.log({ ast });
       if (ast) {
         traverse(ast, (node) => {
           // Detect twTree(...) usage
@@ -32,36 +30,36 @@ export function extractTwTree({ merge = true }: Partial<{ merge: boolean }> = {}
             node.arguments.length > 0
           ) {
             const arg = node.arguments[0];
-            console.log('first');
             const extracted = extractClassesFromNode(arg);
 
             // Merge variants using twMerge if enabled
-            console.log({ extracted });
             const flattened = twTree(extracted, { merge });
 
             // Split merged string and add to Set
+
             flattened
-              .split(' ')
+              .split(/\s+/)
               .filter(Boolean)
               .forEach((cls) => classNames.add(cls));
           } else if (node.type === 'Program') {
             const arg = node.body[0];
             const extracted = extractClassesFromNode(arg);
             const flattened = twTree(extracted, { merge });
-            flattened.split(/\s+/).forEach((cls) => classNames.add(cls));
+            flattened
+              .split(/\s+/)
+              .filter(Boolean)
+              .forEach((cls) => classNames.add(cls));
           }
         });
       }
     } catch (err) {
       console.warn(chalk.yellow('⚠️ Failed to parse AST — falling back to regex matching.'), err);
     }
-
     // Always include fallback regex matches like class="bg-red-500"
     const fallbackMatches = [...content.matchAll(fallbackClassRegex)];
     fallbackMatches.forEach((m) => {
       if (m[0]) classNames.add(m[0]);
     });
-    console.log('extractTwTree', [...classNames]);
     return [...classNames];
   };
 }

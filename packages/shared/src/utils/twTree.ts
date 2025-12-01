@@ -26,7 +26,7 @@ export function twTree<T extends string | object>(
 ): string {
   const classes: string[] = [];
   const prefix = options.prefix ?? '';
-  for (const item of input) {
+  input.forEach((item) => {
     if (typeof item === 'string') {
       const tokens = item.trim().split(/\s+/);
       tokens.forEach((token) => {
@@ -34,7 +34,8 @@ export function twTree<T extends string | object>(
         classes.push(full);
       });
     } else if (typeof item === 'object' && item !== null) {
-      for (const variant in item) {
+      const keys = Object.keys(item) as Array<keyof typeof item & string>;
+      keys.forEach((variant) => {
         const nestedClasses = item[variant];
         if (Array.isArray(nestedClasses)) {
           const nested = twTree(nestedClasses, {
@@ -43,9 +44,9 @@ export function twTree<T extends string | object>(
           });
           classes.push(...nested.split(/\s+/));
         }
-      }
+      });
     }
-  }
+  });
 
   return options.merge ? twMerge(classes.join(' ')) : classes.join(' ');
 }

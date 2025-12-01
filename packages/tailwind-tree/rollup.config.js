@@ -20,7 +20,10 @@ const alias = pluginAlias({
 export default [
   {
     input: 'src/index.ts',
-    output: [{ file: 'dist/index.mjs', format: 'esm' }],
+    output: [
+      { file: 'dist/index.mjs', format: 'esm' },
+      { file: 'dist/index.cjs', format: 'commonjs' },
+    ],
     // nothing parser-ish should be reachable from here, so we don't even need to mark acorn external
     plugins: [
       del({ targets: 'dist/*' }),
