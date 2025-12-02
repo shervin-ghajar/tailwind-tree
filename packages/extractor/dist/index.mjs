@@ -18273,7 +18273,7 @@ function extractTwTree({ merge = true } = {}) {
     return (content, filePath = '') => {
         const classNames = new Set();
         if (!content.includes('twTree') && !fallbackClassRegex.test(content)) {
-            return;
+            return [];
         }
         if (content.includes('twTree') && /[()[\]{};]/.test(content)) {
             console.log({ content });

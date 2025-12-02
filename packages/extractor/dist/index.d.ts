@@ -10,6 +10,6 @@
  */
 declare function extractTwTree({ merge }?: Partial<{
     merge: boolean;
-}>): (content: string, filePath?: string) => string[] | undefined;
+}>): (content: string, filePath?: string) => string[];
 
 export { extractTwTree };
