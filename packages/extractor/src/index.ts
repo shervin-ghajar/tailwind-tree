@@ -18,7 +18,10 @@ import chalk from 'chalk';
 export function extractTwTree({ merge = true }: Partial<{ merge: boolean }> = {}) {
   return (content: string, filePath = '') => {
     const classNames = new Set<string>();
-    if (content.includes('twTree(')) {
+    if (!content.includes('twTree') && !fallbackClassRegex.test(content)) {
+      return;
+    }
+    if (content.includes('twTree') && /[()[\]{};]/.test(content)) {
       console.log({ content });
       try {
         const ast = parseProgram(content, filePath);

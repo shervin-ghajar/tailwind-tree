@@ -18272,7 +18272,10 @@ function twTree(input, options = { prefix: '', merge: true }) {
 function extractTwTree({ merge = true } = {}) {
     return (content, filePath = '') => {
         const classNames = new Set();
-        if (content.includes('twTree(')) {
+        if (!content.includes('twTree') && !fallbackClassRegex.test(content)) {
+            return;
+        }
+        if (content.includes('twTree') && /[()[\]{};]/.test(content)) {
             console.log({ content });
             try {
                 const ast = parseProgram(content, filePath);
