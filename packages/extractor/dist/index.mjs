@@ -1,5 +1,3 @@
-const fallbackClassRegex = /!?(?:[a-zA-Z0-9_-]+:)*(?:[a-zA-Z0-9_-]+)(?:\[[^\]]+\])?/g;
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Recursively extract all possible Tailwind class names from an AST node,
@@ -18270,55 +18268,148 @@ function twTree(input, options = { prefix: '', merge: true }) {
  * @returns A function that returns a list of unique Tailwind class names from code content.
  */
 function extractTwTree({ merge = true } = {}) {
-    return (content, filePath = '') => {
-        const classNames = new Set();
-        if (!content.includes('twTree') && !fallbackClassRegex.test(content)) {
+    return function run(content) {
+        const out = new Set();
+        const trimmed = content.trim();
+        // ---------- ❶ Ignore imports, comments ----------
+        if (/^(import|export)/.test(trimmed))
             return [];
+        if (/^\s*\/\//.test(trimmed))
+            return [];
+        // ---------- ❷ Test3: plain class string ----------
+        // "flex h-full min-w-[332px] ... transition-colors"
+        if (!/[:=]\s*[\\[{]/.test(trimmed) && !/twTree/.test(trimmed)) {
+            splitClasses(trimmed).forEach((c) => out.add(c));
+            return [...out];
         }
-        if (content.includes('twTree') && /[()[\]{};]/.test(content)) {
-            console.log({ content });
+        // ---------- ❸ Test5 & Test7: JSX ----------
+        // "<Flex align='center' ... className={twTree(...)}>"
+        if (/<[A-Za-z]/.test(trimmed)) {
+            const attrs = extractJSXAttributeValues(trimmed);
+            for (const a of attrs) {
+                run(a).forEach((c) => out.add(c));
+            }
+            return [...out];
+        }
+        // ---------- ❹ Test1: prefix array ----------
+        // hover: ['bg-light-6','color-red'],
+        if (isPrefixedArray(trimmed)) {
+            extractPrefixedArray(trimmed).forEach((c) => out.add(c));
+            return [...out];
+        }
+        // ---------- ❺ Test7 & Test5: twTree(...) inside any JS ----------
+        if (trimmed.includes('twTree')) {
             try {
-                const ast = parseProgram(content, filePath);
-                if (ast) {
-                    traverse(ast, (node) => {
-                        // Detect twTree(...) usage
-                        if (node.type === 'CallExpression' &&
-                            node.callee.type === 'Identifier' &&
-                            node.arguments.length > 0) {
-                            const arg = node.arguments[0];
-                            const extracted = extractClassesFromNode(arg);
-                            // Merge variants using twMerge if enabled
-                            const flattened = twTree(extracted, { merge });
-                            // Split merged string and add to Set
-                            flattened
-                                .split(/\s+/)
-                                .filter(Boolean)
-                                .forEach((cls) => classNames.add(cls));
-                        }
-                        else if (node.type === 'Program') {
-                            const arg = node.body[0];
-                            const extracted = extractClassesFromNode(arg);
-                            const flattened = twTree(extracted, { merge });
-                            flattened
-                                .split(/\s+/)
-                                .filter(Boolean)
-                                .forEach((cls) => classNames.add(cls));
-                        }
-                    });
+                let wrapped = '';
+                if (content.startsWith('twTree'))
+                    wrapped = `const __x = ${content}`;
+                else if (content.includes('=')) {
+                    const attrs = extractJSXAttributeValues(trimmed);
+                    for (const a of attrs) {
+                        run(a).forEach((c) => out.add(c));
+                    }
+                }
+                else
+                    wrapped = `const __x = { ${content} }`;
+                const ast = parseProgram(wrapped);
+                console.log({ wrapped, ast });
+                traverse(ast, (node) => {
+                    handleTwTreeCall(node, out, merge);
+                    handlePrefixedObject(node, out);
+                });
+            }
+            catch {
+                // fallback if AST fails
+                extractViaRegex(trimmed).forEach((c) => out.add(c));
+            }
+        }
+        return [...out];
+    };
+}
+/* -------------------------------------------------------------------------- */
+function splitClasses(str) {
+    return str.split(/\s+/).filter(Boolean);
+}
+function isPrefixedArray(content) {
+    return /^[a-zA-Z0-9_-]+\s*:\s*\[/.test(content);
+}
+function extractPrefixedArray(content) {
+    const m = content.match(/^([a-zA-Z0-9_-]+)\s*:\s*\[(.*)\]/);
+    if (!m)
+        return [];
+    const prefix = m[1];
+    const body = m[2];
+    return body
+        .split(',')
+        .map((x) => x.replace(/['"\s]/g, ''))
+        .filter(Boolean)
+        .map((v) => `${prefix}:${v}`);
+}
+function handleTwTreeCall(node, out, merge) {
+    if (node.type === 'CallExpression' &&
+        node.callee.type === 'Identifier' &&
+        node.callee.name === 'twTree' &&
+        node.arguments.length > 0) {
+        const raw = extractClassesFromNode(node.arguments[0]);
+        const flat = twTree(raw, { merge });
+        flat
+            .split(/\s+/)
+            .filter(Boolean)
+            .forEach((c) => out.add(c));
+    }
+}
+function handlePrefixedObject(node, out) {
+    if (node.type !== 'ObjectExpression')
+        return;
+    for (const p of node.properties) {
+        if (p.type === 'ObjectProperty' &&
+            p.key.type === 'Identifier' &&
+            p.value.type === 'ArrayExpression') {
+            for (const el of p.value.elements) {
+                if (el?.type === 'StringLiteral') {
+                    out.add(`${p.key.name}:${el.value}`);
                 }
             }
-            catch (err) {
-                console.warn(chalk.yellow('⚠️ Failed to parse AST — falling back to regex matching.'), err);
-            }
         }
-        // Always include fallback regex matches like class="bg-red-500"
-        const fallbackMatches = [...content.matchAll(fallbackClassRegex)];
-        fallbackMatches.forEach((m) => {
-            if (m[0])
-                classNames.add(m[0]);
-        });
-        return [...classNames];
-    };
+    }
+}
+function extractViaRegex(str) {
+    const m = str.match(/['"`]([^'"`]*)['"`]/g) || [];
+    return m.map((s) => s.replace(/['"`]/g, '')).flatMap((c) => c.split(/\s+/));
+}
+function extractJSXAttributeValues(content) {
+    const results = [];
+    const attrRegex = /([a-zA-Z0-9:_-]+)\s*=\s*/g;
+    while (attrRegex.exec(content)) {
+        const startIndex = attrRegex.lastIndex;
+        const firstChar = content[startIndex];
+        // --- Case 1: key="value"
+        if (firstChar === '"' || firstChar === "'") {
+            const quote = firstChar;
+            let i = startIndex + 1;
+            while (i < content.length && content[i] !== quote)
+                i++;
+            results.push(content.slice(startIndex + 1, i));
+            continue;
+        }
+        // --- Case 2: key={complexValue}
+        if (firstChar === '{') {
+            let i = startIndex + 1;
+            let depth = 1;
+            while (i < content.length && depth > 0) {
+                const ch = content[i];
+                if (ch === '{')
+                    depth++;
+                else if (ch === '}')
+                    depth--;
+                i++;
+            }
+            const raw = content.slice(startIndex + 1, i - 1).trim();
+            results.push(raw);
+            continue;
+        }
+    }
+    return results;
 }
 
 export { extractTwTree };
