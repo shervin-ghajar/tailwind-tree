@@ -22,13 +22,6 @@ export function extractTwTree({ merge = true }: Partial<{ merge: boolean }> = {}
     if (/^(import|export)/.test(trimmed)) return [];
     if (/^\s*\/\//.test(trimmed)) return [];
 
-    // ---------- ❷ Test3: plain class string ----------
-    // "flex h-full min-w-[332px] ... transition-colors"
-    if (!/[:=]\s*[\\[{]/.test(trimmed) && !/twTree/.test(trimmed)) {
-      splitClasses(trimmed).forEach((c) => out.add(c));
-      return [...out];
-    }
-
     // ---------- ❸ Test5 & Test7: JSX ----------
     // "<Flex align='center' ... className={twTree(...)}>"
     if (/<[A-Za-z]/.test(trimmed)) {
@@ -36,6 +29,12 @@ export function extractTwTree({ merge = true }: Partial<{ merge: boolean }> = {}
       for (const a of attrs) {
         run(a).forEach((c) => out.add(c));
       }
+      return [...out];
+    }
+    // ---------- ❷ Test3: plain class string ----------
+    // "flex h-full min-w-[332px] ... transition-colors"
+    if (!/[:=]\s*[\\[{]/.test(trimmed) && !/twTree/.test(trimmed)) {
+      splitClasses(trimmed).forEach((c) => out.add(c));
       return [...out];
     }
 

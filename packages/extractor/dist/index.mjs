@@ -18276,12 +18276,6 @@ function extractTwTree({ merge = true } = {}) {
             return [];
         if (/^\s*\/\//.test(trimmed))
             return [];
-        // ---------- ❷ Test3: plain class string ----------
-        // "flex h-full min-w-[332px] ... transition-colors"
-        if (!/[:=]\s*[\\[{]/.test(trimmed) && !/twTree/.test(trimmed)) {
-            splitClasses(trimmed).forEach((c) => out.add(c));
-            return [...out];
-        }
         // ---------- ❸ Test5 & Test7: JSX ----------
         // "<Flex align='center' ... className={twTree(...)}>"
         if (/<[A-Za-z]/.test(trimmed)) {
@@ -18289,6 +18283,12 @@ function extractTwTree({ merge = true } = {}) {
             for (const a of attrs) {
                 run(a).forEach((c) => out.add(c));
             }
+            return [...out];
+        }
+        // ---------- ❷ Test3: plain class string ----------
+        // "flex h-full min-w-[332px] ... transition-colors"
+        if (!/[:=]\s*[\\[{]/.test(trimmed) && !/twTree/.test(trimmed)) {
+            splitClasses(trimmed).forEach((c) => out.add(c));
             return [...out];
         }
         // ---------- ❹ Test1: prefix array ----------
