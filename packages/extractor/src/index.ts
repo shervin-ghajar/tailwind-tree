@@ -31,15 +31,24 @@ export function extractTwTree({ merge = true }: Partial<{ merge: boolean }> = {}
       }
       return [...out];
     }
+
     // ---------- ❷ Test3: plain class string ----------
     // "flex h-full min-w-[332px] ... transition-colors"
     if (!/[:=]\s*[\\[{]/.test(trimmed) && !/twTree/.test(trimmed)) {
-      const match = trimmed.match(/["']([^"']+)["']/);
-      if (match) {
-        return splitClasses(match[1]);
+      // 1. Extract all quoted class names: "bg-red", 'bg-red', `bg-red`
+      for (const m of trimmed.matchAll(/["'`](.*?)["'`]/g)) {
+        splitClasses(m[1]).forEach((c) => out.add(c));
       }
-      // fallback: remove everything before "="
-      splitClasses(chopped(trimmed)).forEach((c) => out.add(c));
+
+      // 2. Extract unquoted naked classnames OUTSIDE ${...}
+      // Remove template expressions first
+      const withoutTemplates = trimmed.replace(/\${[^}]*}/g, '');
+
+      // Split remaining text
+      splitClasses(withoutTemplates).forEach((token) => {
+        if (isValidClass(token)) out.add(token);
+      });
+
       return [...out];
     }
 
@@ -50,26 +59,25 @@ export function extractTwTree({ merge = true }: Partial<{ merge: boolean }> = {}
       return [...out];
     }
     // ---------- ❺ Test7 & Test5: twTree(...) inside any JS ----------
-    if (trimmed.includes('twTree') || content.includes('=')) {
-      try {
-        let wrapped = '';
-        if (content.startsWith('twTree')) wrapped = `const __x = ${content}`;
-        else if (content.includes('=')) {
-          const attrs = extractJSXAttributeValues(trimmed);
-          for (const a of attrs) {
-            run(a).forEach((c) => out.add(c));
-          }
-        } else wrapped = `const __x = { ${content} }`;
+    try {
+      let wrapped = '';
+      if (content.startsWith('twTree')) wrapped = safeWrapTwTree(content);
+      else if (content.includes('=')) {
+        const attrs = extractJSXAttributeValues(trimmed);
 
-        const ast = parseProgram(wrapped);
-        traverse(ast, (node) => {
-          handleTwTreeCall(node, out, merge);
-          handlePrefixedObject(node, out);
-        });
-      } catch {
-        // fallback if AST fails
-        extractViaRegex(trimmed).forEach((c) => out.add(c));
-      }
+        for (const a of attrs) {
+          run(a).forEach((c) => out.add(c));
+        }
+      } else wrapped = `const __x = { ${content} }`;
+
+      const ast = parseProgram(wrapped);
+      traverse(ast, (node) => {
+        handleTwTreeCall(node, out, merge);
+        handlePrefixedObject(node, out);
+      });
+    } catch {
+      // fallback if AST fails
+      extractViaRegex(trimmed).forEach((c) => out.add(c));
     }
 
     return [...out];
@@ -131,6 +139,36 @@ function chopped(str: string) {
     .replace(/^[^=]*=\s*/, '') // remove everything before =
     .replace(/^["'`]|["'`]$/g, '');
 }
+function safeWrapTwTree(expr: string): string {
+  // If complete, wrap normally.
+  if (isBalanced(expr)) {
+    return `const __x = ${expr}`;
+  } else {
+    // ⛔ Incomplete: return empty string.
+    return '';
+  }
+}
+function isBalanced(expr: string): boolean {
+  let round = 0,
+    square = 0,
+    curly = 0;
+
+  for (const ch of expr) {
+    if (ch === '(') round++;
+    if (ch === ')') round--;
+    if (ch === '[') square++;
+    if (ch === ']') square--;
+    if (ch === '{') curly++;
+    if (ch === '}') curly--;
+  }
+
+  return round === 0 && square === 0 && curly === 0;
+}
+function isValidClass(token: string) {
+  // valid class example: bg-red-500, text-primary, w-7, mt-4 etc.
+  return /^[a-zA-Z0-9-_:/.%]+$/.test(token);
+}
+
 function extractViaRegex(str: string): string[] {
   const m = str.match(/['"`]([^'"`]*)['"`]/g) || [];
   return m.map((s) => s.replace(/['"`]/g, '')).flatMap((c) => c.split(/\s+/));
