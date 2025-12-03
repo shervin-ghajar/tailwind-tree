@@ -15221,6 +15221,7 @@ function parseProgram(code, filePath = '') {
     }
     catch (err) {
         console.warn(chalk.yellow(`Parser failed to parse ${filePath}:`), err);
+        console.log('parseProgramError', { code });
         return {
             type: 'File',
             program: { type: 'Program', body: [], sourceType: 'module' },
