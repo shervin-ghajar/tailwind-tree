@@ -13,7 +13,8 @@ import { twTree } from '@tailwind-tree/shared/utils/twTree';
  * @param options.merge Enables twMerge for deduplication and variant collapsing (default: true)
  * @returns A function that returns a list of unique Tailwind class names from code content.
  */
-export function extractTwTree({ merge = true }: Partial<{ merge: boolean }> = {}) {
+export function extractTwTree() {
+  const merge = false;
   return function run(content: string): string[] {
     const out = new Set<string>();
     const trimmed = content.trim();
@@ -121,17 +122,14 @@ function handlePrefixedObject(node: any, out: Set<string>) {
   if (node.type !== 'ObjectExpression') return;
 
   for (const p of node.properties) {
-    if (
-      p.type === 'ObjectProperty' &&
-      p.key.type === 'Identifier' &&
-      p.value.type === 'ArrayExpression'
-    ) {
-      for (const el of p.value.elements) {
-        if (el?.type === 'StringLiteral') {
-          out.add(`${p.key.name}:${el.value}`);
-        }
-      }
-    }
+    if (p.type !== 'ObjectProperty' || p.key.type !== 'Identifier') continue;
+
+    const key = p.key.name;
+    const values = extractClassesFromNode(p.value); // 👈 recursive extraction
+
+    values.forEach((v) => {
+      out.add(`${key}:${v}`);
+    });
   }
 }
 function chopped(str: string) {

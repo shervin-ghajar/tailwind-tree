@@ -8,8 +8,6 @@
  * @param options.merge Enables twMerge for deduplication and variant collapsing (default: true)
  * @returns A function that returns a list of unique Tailwind class names from code content.
  */
-declare function extractTwTree({ merge }?: Partial<{
-    merge: boolean;
-}>): (content: string) => string[];
+declare function extractTwTree(): (content: string) => string[];
 
 export { extractTwTree };
