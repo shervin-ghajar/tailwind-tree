@@ -18290,7 +18290,12 @@ function extractTwTree({ merge = true } = {}) {
         // ---------- ❷ Test3: plain class string ----------
         // "flex h-full min-w-[332px] ... transition-colors"
         if (!/[:=]\s*[\\[{]/.test(trimmed) && !/twTree/.test(trimmed)) {
-            splitClasses(trimmed).forEach((c) => out.add(c));
+            const match = trimmed.match(/["']([^"']+)["']/);
+            if (match) {
+                return splitClasses(match[1]);
+            }
+            // fallback: remove everything before "="
+            splitClasses(chopped(trimmed)).forEach((c) => out.add(c));
             return [...out];
         }
         // ---------- ❹ Test1: prefix array ----------
@@ -18300,7 +18305,7 @@ function extractTwTree({ merge = true } = {}) {
             return [...out];
         }
         // ---------- ❺ Test7 & Test5: twTree(...) inside any JS ----------
-        if (trimmed.includes('twTree')) {
+        if (trimmed.includes('twTree') || content.includes('=')) {
             try {
                 let wrapped = '';
                 if (content.startsWith('twTree'))
@@ -18314,7 +18319,6 @@ function extractTwTree({ merge = true } = {}) {
                 else
                     wrapped = `const __x = { ${content} }`;
                 const ast = parseProgram(wrapped);
-                console.log({ wrapped, ast });
                 traverse(ast, (node) => {
                     handleTwTreeCall(node, out, merge);
                     handlePrefixedObject(node, out);
@@ -18375,6 +18379,11 @@ function handlePrefixedObject(node, out) {
         }
     }
 }
+function chopped(str) {
+    return str
+        .replace(/^[^=]*=\s*/, '') // remove everything before =
+        .replace(/^["'`]|["'`]$/g, '');
+}
 function extractViaRegex(str) {
     const m = str.match(/['"`]([^'"`]*)['"`]/g) || [];
     return m.map((s) => s.replace(/['"`]/g, '')).flatMap((c) => c.split(/\s+/));
@@ -18391,7 +18400,7 @@ function extractJSXAttributeValues(content) {
             let i = startIndex + 1;
             while (i < content.length && content[i] !== quote)
                 i++;
-            results.push(content.slice(startIndex + 1, i));
+            results.push(chopped(content.slice(startIndex + 1, i)));
             continue;
         }
         // --- Case 2: key={complexValue}
@@ -18407,7 +18416,7 @@ function extractJSXAttributeValues(content) {
                 i++;
             }
             const raw = content.slice(startIndex + 1, i - 1).trim();
-            results.push(raw);
+            results.push(chopped(raw));
             continue;
         }
     }

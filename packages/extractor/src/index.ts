@@ -34,7 +34,12 @@ export function extractTwTree({ merge = true }: Partial<{ merge: boolean }> = {}
     // ---------- ❷ Test3: plain class string ----------
     // "flex h-full min-w-[332px] ... transition-colors"
     if (!/[:=]\s*[\\[{]/.test(trimmed) && !/twTree/.test(trimmed)) {
-      splitClasses(trimmed).forEach((c) => out.add(c));
+      const match = trimmed.match(/["']([^"']+)["']/);
+      if (match) {
+        return splitClasses(match[1]);
+      }
+      // fallback: remove everything before "="
+      splitClasses(chopped(trimmed)).forEach((c) => out.add(c));
       return [...out];
     }
 
@@ -44,9 +49,8 @@ export function extractTwTree({ merge = true }: Partial<{ merge: boolean }> = {}
       extractPrefixedArray(trimmed).forEach((c) => out.add(c));
       return [...out];
     }
-
     // ---------- ❺ Test7 & Test5: twTree(...) inside any JS ----------
-    if (trimmed.includes('twTree')) {
+    if (trimmed.includes('twTree') || content.includes('=')) {
       try {
         let wrapped = '';
         if (content.startsWith('twTree')) wrapped = `const __x = ${content}`;
@@ -58,7 +62,6 @@ export function extractTwTree({ merge = true }: Partial<{ merge: boolean }> = {}
         } else wrapped = `const __x = { ${content} }`;
 
         const ast = parseProgram(wrapped);
-        console.log({ wrapped, ast });
         traverse(ast, (node) => {
           handleTwTreeCall(node, out, merge);
           handlePrefixedObject(node, out);
@@ -90,11 +93,6 @@ function extractPrefixedArray(content: string): string[] {
     .map((x) => x.replace(/['"\s]/g, ''))
     .filter(Boolean)
     .map((v) => `${prefix}:${v}`);
-}
-function safeWrap(content: string): string {
-  if (content.startsWith('twTree')) return `const __x = ${content}`;
-  else if (content.includes('=')) return content;
-  return `const __x = { ${content} }`;
 }
 function handleTwTreeCall(node: any, out: Set<string>, merge: boolean) {
   if (
@@ -128,6 +126,11 @@ function handlePrefixedObject(node: any, out: Set<string>) {
     }
   }
 }
+function chopped(str: string) {
+  return str
+    .replace(/^[^=]*=\s*/, '') // remove everything before =
+    .replace(/^["'`]|["'`]$/g, '');
+}
 function extractViaRegex(str: string): string[] {
   const m = str.match(/['"`]([^'"`]*)['"`]/g) || [];
   return m.map((s) => s.replace(/['"`]/g, '')).flatMap((c) => c.split(/\s+/));
@@ -147,7 +150,7 @@ function extractJSXAttributeValues(content: string): string[] {
       const quote = firstChar;
       let i = startIndex + 1;
       while (i < content.length && content[i] !== quote) i++;
-      results.push(content.slice(startIndex + 1, i));
+      results.push(chopped(content.slice(startIndex + 1, i)));
       continue;
     }
 
@@ -164,7 +167,7 @@ function extractJSXAttributeValues(content: string): string[] {
       }
 
       const raw = content.slice(startIndex + 1, i - 1).trim();
-      results.push(raw);
+      results.push(chopped(raw));
       continue;
     }
   }

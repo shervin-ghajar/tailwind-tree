@@ -32,9 +32,13 @@ const test6 = '// InputDatePicker.stories.tsx';
 const test7 = "className={twTree(['bg-white-ff', { hover: ['bg-red-500'] }])}";
 const test8 = "<Icon name='time' />";
 const test9 = '<Flex className="items-center gap-1 ">';
+const test10 = 'className="bg-white-ff z-10 mt-4 flex-wrap  rounded-t-lg "';
+const test11 = "badgeBorderColor: 'border-positive-light-2',";
+const test12 =
+  'className={`text-primary h-7 w-7 rounded-full border ${card.badgeBorderColor} ${card.badgeBgColor} p-1 text-center`}';
 
 // 1. Extract classes from a source string
-const extractedClasses = extractTwTree()(test9);
+const extractedClasses = extractTwTree()(test1);
 console.log('Extracted classes:', extractedClasses);
 
 // 2. Run generateTwSafelist to scan all source files & write safelist
