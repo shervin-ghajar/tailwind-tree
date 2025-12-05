@@ -20,6 +20,9 @@ importers:
       '@rollup/plugin-node-resolve':
         specifier: ^16.0.1
         version: 16.0.1(rollup@4.46.1)
+      '@rollup/plugin-strip':
+        specifier: 3.0.4
+        version: 3.0.4(rollup@4.46.1)
       '@rollup/plugin-terser':
         specifier: ^0.4.4
         version: 0.4.4(rollup@4.46.1)
@@ -62,9 +65,6 @@ importers:
       rollup-plugin-dts:
         specifier: ^6.2.1
         version: 6.2.1(rollup@4.46.1)(typescript@5.8.3)
-      rollup-plugin-strip:
-        specifier: ^1.2.2
-        version: 1.2.2
       rollup-plugin-visualizer:
         specifier: ^6.0.3
         version: 6.0.3(rollup@4.46.1)
@@ -169,16 +169,9 @@ importers:
       '@babel/types':
         specifier: 7.28.5
         version: 7.28.5
-      chalk:
-        specifier: ^5.4.1
-        version: 5.4.1
       tailwind-merge:
         specifier: '>=3.0.0'
         version: 3.3.1
-    devDependencies:
-      '@types/estree':
-        specifier: 1.0.8
-        version: 1.0.8
 
   packages/tailwind-tree:
     dependencies:
@@ -1117,6 +1110,21 @@ packages:
       deepmerge: 4.3.1
       is-module: 1.0.0
       resolve: 1.22.10
+      rollup: 4.46.1
+    dev: true
+
+  /@rollup/plugin-strip@3.0.4(rollup@4.46.1):
+    resolution: {integrity: sha512-LDRV49ZaavxUo2YoKKMQjCxzCxugu1rCPQa0lDYBOWLj6vtzBMr8DcoJjsmg+s450RbKbe3qI9ZLaSO+O1oNbg==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@rollup/pluginutils': 5.2.0(rollup@4.46.1)
+      estree-walker: 2.0.2
+      magic-string: 0.30.21
       rollup: 4.46.1
     dev: true
 
@@ -2327,10 +2335,6 @@ packages:
     engines: {node: '>=4.0'}
     dev: true
 
-  /estree-walker@0.6.1:
-    resolution: {integrity: sha512-SqmZANLWS0mnatqbSfRP5g8OXZC12Fgg1IwNtLsyHDzJizORW4khDfjPqJZsemPWBB2uqykUah5YpQ6epsqC/w==}
-    dev: true
-
   /estree-walker@2.0.2:
     resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
     dev: true
@@ -2829,12 +2833,6 @@ packages:
       yallist: 3.1.1
     dev: true
 
-  /magic-string@0.25.9:
-    resolution: {integrity: sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ==}
-    dependencies:
-      sourcemap-codec: 1.4.8
-    dev: true
-
   /magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
     dependencies:
@@ -3169,15 +3167,6 @@ packages:
       '@babel/code-frame': 7.27.1
     dev: true
 
-  /rollup-plugin-strip@1.2.2:
-    resolution: {integrity: sha512-n6hmt7ben8txSrpEXvRd0aNApQTpexst0qSu6QFzOSrb7EE2yPVIlEK0n4RWYT1gieBkSN7ECvYvY/g7OsQMLA==}
-    deprecated: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-strip
-    dependencies:
-      estree-walker: 0.6.1
-      magic-string: 0.25.9
-      rollup-pluginutils: 2.8.2
-    dev: true
-
   /rollup-plugin-visualizer@6.0.3(rollup@4.46.1):
     resolution: {integrity: sha512-ZU41GwrkDcCpVoffviuM9Clwjy5fcUxlz0oMoTXTYsK+tcIFzbdacnrr2n8TXcHxbGKKXtOdjxM2HUS4HjkwIw==}
     engines: {node: '>=18'}
@@ -3196,12 +3185,6 @@ packages:
       rollup: 4.46.1
       source-map: 0.7.6
       yargs: 17.7.2
-    dev: true
-
-  /rollup-pluginutils@2.8.2:
-    resolution: {integrity: sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ==}
-    dependencies:
-      estree-walker: 0.6.1
     dev: true
 
   /rollup@4.46.1:
@@ -3311,11 +3294,6 @@ packages:
   /source-map@0.7.6:
     resolution: {integrity: sha512-i5uvt8C3ikiWeNZSVZNWcfZPItFQOsYTUAOkcUPGd8DqDy1uOUikjt5dG+uRlwyvR108Fb9DOd4GvXfT0N2/uQ==}
     engines: {node: '>= 12'}
-    dev: true
-
-  /sourcemap-codec@1.4.8:
-    resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
-    deprecated: Please use @jridgewell/sourcemap-codec instead
     dev: true
 
   /string-width@4.2.3:

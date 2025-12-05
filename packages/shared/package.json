@@ -8,12 +8,8 @@
     "./constants/*": "./src/constants/*"
   },
   "dependencies": {
-    "chalk": "^5.4.1",
     "tailwind-merge": ">=3.0.0",
     "@babel/parser": "7.28.5",
     "@babel/types": "7.28.5"
-  },
-  "devDependencies": {
-    "@types/estree": "1.0.8"
   }
 }

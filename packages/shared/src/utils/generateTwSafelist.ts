@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -42,7 +41,7 @@ export const collectUsedClasses = (sourceFiles: string[]): Set<string> => {
     try {
       content = fs.readFileSync(filePath, 'utf8');
     } catch {
-      console.warn(chalk.yellow(`⚠️  Failed to read file: ${filePath}`));
+      console.warn(`⚠️  Failed to read file: ${filePath}`);
       return;
     }
     if (!/\btwTree\s*\(/.test(content)) return;
