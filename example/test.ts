@@ -21,7 +21,7 @@ twTree([
   ]);
 `;
 
-const test1 = "hover: ['bg-light-6','color-red'],";
+const test1 = "hover: 'bg-light-6 color-red' ";
 
 const test3 =
   'flex h-full min-w-[332px] cursor-pointer items-center rounded-lg p-6 transition-colors';
@@ -46,7 +46,7 @@ const test18 = 'case ReportFilterDisplayType.Stage: {';
 const test19 = '[ReportFilterDisplayType.Category]: {';
 
 // 1. Extract classes from a source string
-const extractedClasses = extractTwTree()(test7);
+const extractedClasses = extractTwTree()(test1);
 console.log('Extracted classes:', extractedClasses);
 
 // 2. Run generateTwSafelist to scan all source files & write safelist

@@ -6,7 +6,12 @@ import { extractTwTree } from '../packages/extractor/src';
 const testCases = [
   {
     name: 'test1',
-    source: "hover: ['bg-light-6','color-red'],",
+    source: "hover: 'bg-light-6 color-red'",
+    expected: ['hover:bg-light-6', 'hover:color-red'],
+  },
+  {
+    name: 'test2',
+    source: "hover: ['bg-light-6', 'color-red']",
     expected: ['hover:bg-light-6', 'hover:color-red'],
   },
   {

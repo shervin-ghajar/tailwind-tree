@@ -9,5 +9,6 @@
  *  - Incomplete input lines and fallback recovery
  */
 declare function extractTwTree(): (content: string) => string[];
+declare function isPrefixedString(content: string): boolean;
 
-export { extractTwTree };
+export { extractTwTree, isPrefixedString };

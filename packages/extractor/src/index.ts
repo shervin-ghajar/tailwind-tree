@@ -38,6 +38,34 @@ export function extractTwTree() {
     }
 
     /* ──────────────────────────────────────────────────────────────────────────
+     * ❹ JS object prefix arrays:
+     *    hover: ['bg-red', 'p-4']
+     * ────────────────────────────────────────────────────────────────────────── */
+    if (isPrefixedArray(trimmed)) {
+      extractPrefixedArray(trimmed).forEach((c) => out.add(c));
+      return [...out];
+    }
+
+    /* ──────────────────────────────────────────────────────────────────────────
+     * ❹.5 JS object prefixed strings:
+     *    hover: "bg-red text-grey"
+     *    focus: 'ring-2 ring-green-500'
+     *    active: `p-2 text-xl`
+     * ────────────────────────────────────────────────────────────────────────── */
+    if (isPrefixedString(trimmed)) {
+      const m = trimmed.match(/^([a-zA-Z0-9_-]+)\s*:\s*['"`](.*)['"`]/);
+      if (m) {
+        const prefix = m[1];
+        const body = m[2];
+
+        splitClasses(body).forEach((cls) => {
+          if (cls) out.add(`${prefix}:${cls}`);
+        });
+      }
+      return [...out];
+    }
+
+    /* ──────────────────────────────────────────────────────────────────────────
      * ❸ Plain class strings with no JS syntax
      *    e.g. "flex p-4 bg-red"
      *    This covers raw HTML/TW strings or standalone className="text..."
@@ -49,20 +77,12 @@ export function extractTwTree() {
       }
 
       // Remove ${...} template blocks and detect naked classes
+
       const withoutTemplates = trimmed.replace(/\${[^}]*}/g, '');
       splitClasses(withoutTemplates).forEach((token) => {
         if (isValidClass(token)) out.add(token);
       });
 
-      return [...out];
-    }
-
-    /* ──────────────────────────────────────────────────────────────────────────
-     * ❹ JS object prefix arrays:
-     *    hover: ['bg-red', 'p-4']
-     * ────────────────────────────────────────────────────────────────────────── */
-    if (isPrefixedArray(trimmed)) {
-      extractPrefixedArray(trimmed).forEach((c) => out.add(c));
       return [...out];
     }
 
@@ -135,6 +155,10 @@ function splitClasses(str: string): string[] {
 
 function isPrefixedArray(content: string): boolean {
   return /^[a-zA-Z0-9_-]+\s*:\s*\[/.test(content);
+}
+
+export function isPrefixedString(content: string): boolean {
+  return /^[a-zA-Z0-9_-]+\s*:\s*['"`][^"'`]+['"`]\s*$/.test(content);
 }
 
 function extractPrefixedArray(content: string): string[] {
