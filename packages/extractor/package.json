@@ -1,8 +1,8 @@
 {
   "name": "@tailwind-tree/extractor",
   "private": false,
-  "version": "0.2.1",
-  "description": "A utility for writing deeply nested and composable Tailwind CSS classes using an expressive tree structure, supporting responsive and interactive variants for Tailwind v3 and v4.",
+  "version": "0.3.0",
+ "description": "A custom extractor enabling tailwind-tree to work seamlessly with Tailwind's JIT engine. See: https://www.npmjs.com/package/tailwind-tree",
   "author": {
     "name": "Shervin Ghajar",
     "email": "ssghajar.work@gmail.com"

@@ -27,7 +27,7 @@ const test3 =
   'flex h-full min-w-[332px] cursor-pointer items-center rounded-lg p-6 transition-colors';
 const test4 = "import { Tooltip } from 'antd';";
 const test5 =
-  "<Flex align='center' justify='space-between' className={twTree(['bg-white-ff', { hover: ['bg-red-500'] }])}>";
+  "<Flex align='center' justify='space-between' className={twTree(['bg-white-ff', { hover: 'bg-red-500' }])}>";
 const test6 = '// InputDatePicker.stories.tsx';
 const test7 =
   "className={twTree(['bg-white-ff', { hover: true? ['bg-red-500'] : ['bg-red-700'] }])}";
@@ -37,7 +37,7 @@ const test10 = 'className="bg-white-ff z-10 mt-4 flex-wrap  rounded-t-lg "';
 const test11 = "badgeBorderColor: 'border-positive-light-2',";
 const test12 =
   'className={`text-primary h-7 w-7 rounded-full border ${false?"bg-red":"bg-blue"} ${card.badgeBgColor} p-1 text-center`}';
-const test13 = 'className={twTree([ h-7 w-7 '; // TODO return []
+const test13 = 'className={twTree([ h-7 w-7 ';
 const test14 =
   'text-primary h-7 w-7 rounded-full border ${false?"bg-red":"bg-blue"} ${card.badgeBgColor} p-1 text-center';
 const test15 = 'aggregation: { column: string; fun: StandardReportFieldAggregateFunction },';
@@ -47,7 +47,7 @@ const test18 = 'case ReportFilterDisplayType.Stage: {';
 const test19 = '[ReportFilterDisplayType.Category]: {';
 
 // 1. Extract classes from a source string
-const extractedClasses = extractTwTree()(test1);
+const extractedClasses = extractTwTree()(test5);
 console.log('Extracted classes:', extractedClasses);
 
 // 2. Run generateTwSafelist to scan all source files & write safelist
@@ -91,16 +91,3 @@ twTree([
   anotherCondition ? 'p-4' : 'p-2',
   ['font-bold', `tracking-wide`],
 ]);
-
-console.log(
-  'test',
-  twTree([
-    'flex h-full min-w-[332px] cursor-pointer items-center rounded-lg p-6 transition-colors',
-    {
-      hover: ['bg-light-6'],
-    },
-    {
-      hover: ['bg-red-500'],
-    },
-  ]),
-);

@@ -17,8 +17,16 @@ export function extractClassesFromNode(node: any, prefix = ''): string[] {
   if (!node) return [];
 
   switch (node.type) {
-    case 'StringLiteral':
+    case 'StringLiteral': {
+      const parts = node.value.split(/\s+/).filter(Boolean);
+
+      // if more than one, prefix each individually
+      if (parts.length > 1) {
+        return parts.map((p: string) => prefix + p);
+      }
+
       return [prefix + node.value];
+    }
     case 'TemplateLiteral':
       if (node.expressions.length === 0)
         return [prefix + node.quasis.map((q: any) => q.value.cooked).join('')];

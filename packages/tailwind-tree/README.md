@@ -55,8 +55,8 @@ import { twTree } from 'tailwind-tree';
   className={twTree([
     'bg-amber-500 text-nowrap',
     {
-      hover: ['bg-slate-600', 'text-clip'],
-      md: [{ focus: ['text-blue-700'] }],
+      hover: 'bg-slate-600 text-clip',
+      md: { focus: 'text-blue-700' },
     },
   ])}
 />;
@@ -72,11 +72,10 @@ twTree([
   isActive ? 'bg-green-500' : 'bg-green-300',
   {
     hover: [
-      'underline',
-      'opacity-50',
+      'underline opacity-50',
       isFocused ? 'bg-blue-200' : 'bg-blue-100',
       {
-        active: ['scale-105', 'font-semibold'],
+        active: 'scale-105 font-semibold',
       },
     ],
     focus: [
@@ -87,7 +86,7 @@ twTree([
     ],
   },
   anotherCondition ? 'p-4' : 'p-2',
-  ['font-bold', 'tracking-wide'],
+  'font-bold tracking-wide',
 ]);
 ```
 
@@ -155,9 +154,9 @@ pnpm add -D @tailwind-tree/vite-plugin
 
 ```ts
 // vite.config.ts
-import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
 import { twTreePlugin } from '@tailwind-tree/vite-plugin';
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [

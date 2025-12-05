@@ -1,8 +1,8 @@
 {
   "name": "@tailwind-tree/vite-plugin",
   "private": false,
-  "version": "0.1.0",
-  "description": "A utility for writing deeply nested and composable Tailwind CSS classes using an expressive tree structure, supporting responsive and interactive variants for Tailwind v3 and v4.",
+  "version": "0.2.0",
+  "description": "Vite plugin for tailwind-tree. Fully compatible with Tailwind v4 and supports dynamic twTree class generation with zero setup. See: https://www.npmjs.com/package/tailwind-tree",
   "author": {
     "name": "Shervin Ghajar",
     "email": "ssghajar.work@gmail.com"

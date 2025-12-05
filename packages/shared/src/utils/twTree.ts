@@ -43,6 +43,12 @@ export function twTree<T extends string | object>(
             merge: options.merge,
           });
           classes.push(...nested.split(/\s+/));
+        } else if (typeof nestedClasses === 'string' || typeof nestedClasses === 'object') {
+          const nested = twTree([nestedClasses as T], {
+            prefix: prefix ? `${prefix}${variant}:` : `${variant}:`,
+            merge: options.merge,
+          });
+          classes.push(...nested.split(/\s+/));
         }
       });
     }

@@ -1,6 +1,7 @@
-import { twTree } from '@tailwind-tree/shared/utils/twTree.ts';
+import { twTree } from 'tailwind-tree';
 
 function App() {
+  const withCondition = true;
   return (
     <div
       className={twTree([
@@ -8,8 +9,14 @@ function App() {
         {
           hover: 'bg-amber-900 w-[100px]',
           md: 'w-[50px] bg-amber-300',
-          active: ['bg-green-200'],
+          focus: [
+            'ring-green-300',
+            {
+              visible: 'ring-green-500',
+            },
+          ],
         },
+        withCondition ? 'bg-green-500' : 'bg-red-500',
       ])}
     >
       test
