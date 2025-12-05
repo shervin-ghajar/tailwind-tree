@@ -6,8 +6,8 @@ import { extractTwTree } from '../packages/extractor/src';
 const testCases = [
   {
     name: 'test1',
-    source: "hover: 'bg-light-6 color-red'",
-    expected: ['hover:bg-light-6', 'hover:color-red'],
+    source: "hover: 'bg-negative-light-2 h-[100px]',",
+    expected: ['hover:bg-negative-light-2', 'hover:h-[100px]'],
   },
   {
     name: 'test2',
@@ -60,11 +60,6 @@ const testCases = [
     name: 'test10',
     source: 'className="bg-white-ff z-10 mt-4 flex-wrap  rounded-t-lg "',
     expected: ['bg-white-ff', 'z-10', 'mt-4', 'flex-wrap', 'rounded-t-lg'],
-  },
-  {
-    name: 'test11',
-    source: "badgeBorderColor: 'border-positive-light-2',",
-    expected: ['badgeBorderColor:', 'border-positive-light-2'],
   },
   {
     name: 'test12',

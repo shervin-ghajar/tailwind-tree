@@ -21,7 +21,7 @@ twTree([
   ]);
 `;
 
-const test1 = "hover: 'bg-light-6 color-red' ";
+const test1 = "hover: 'bg-negative-light-2 h-[100px]',";
 
 const test3 =
   'flex h-full min-w-[332px] cursor-pointer items-center rounded-lg p-6 transition-colors';

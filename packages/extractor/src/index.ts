@@ -158,7 +158,7 @@ function isPrefixedArray(content: string): boolean {
 }
 
 export function isPrefixedString(content: string): boolean {
-  return /^[a-zA-Z0-9_-]+\s*:\s*['"`][^"'`]+['"`]\s*$/.test(content);
+  return /^[a-zA-Z0-9_-]+\s*:\s*['"`]([^"'`]+)['"`],?$/.test(content.trim());
 }
 
 function extractPrefixedArray(content: string): string[] {
