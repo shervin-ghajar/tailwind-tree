@@ -50,7 +50,6 @@ export function extractTwTree() {
 
       // Remove ${...} template blocks and detect naked classes
       const withoutTemplates = trimmed.replace(/\${[^}]*}/g, '');
-      console.log({ withoutTemplates });
       splitClasses(withoutTemplates).forEach((token) => {
         if (isValidClass(token)) out.add(token);
       });
@@ -101,7 +100,6 @@ export function extractTwTree() {
         /* ───── Generic expression: wrap as object literal ───── */
         wrapped = `const __x = { ${content} }`;
       }
-
       /* ────────────────────────────────────────────────────────
        * Try AST parsing of the wrapped content
        * ──────────────────────────────────────────────────────── */
@@ -112,7 +110,7 @@ export function extractTwTree() {
           handleTwTreeCall(node, out, merge);
           handlePrefixedObject(node, out);
         });
-      } else {
+      } else if (!out.size) {
         throw new Error('AST failed');
       }
     } catch {

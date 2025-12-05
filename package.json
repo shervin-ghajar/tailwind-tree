@@ -47,7 +47,7 @@
     "build:tailwind-tree": "pnpm --filter tailwind-tree run build",
     "build:extractor": "pnpm --filter @tailwind-tree/extractor run build",
     "build:plugin": "pnpm --filter @tailwind-tree/vite-plugin run build",
-    "build:all": "pnpm build:tailwind-tree && pnpm build:extractor && pnpm build:plugin",
+    "build:all": "pnpm test && pnpm build:tailwind-tree && pnpm build:extractor && pnpm build:plugin",
     "test": "vitest run",
     "test:watch": "vitest",
     "prepare": "husky"

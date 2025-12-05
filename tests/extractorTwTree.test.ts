@@ -43,7 +43,7 @@ const testCases = [
   {
     name: 'test7',
     source: "className={twTree(['bg-white-ff', { hover: true? ['bg-red-500'] : ['bg-red-700'] }])}",
-    expected: ['bg-red-500', 'bg-red-700', 'bg-white-ff', 'hover:bg-red-500', 'hover:bg-red-700'], // TODO duplicated return
+    expected: ['bg-white-ff', 'hover:bg-red-500', 'hover:bg-red-700'],
   },
   { name: 'test8', source: "<Icon name='time' />", expected: ['time'] },
   {
@@ -66,9 +66,6 @@ const testCases = [
     source:
       'className={`text-primary h-7 w-7 rounded-full border ${false?"bg-red":"bg-blue"} ${card.badgeBgColor} p-1 text-center`}',
     expected: [
-      '${card.badgeBgColor}',
-      '${false?',
-      ':',
       'text-primary',
       'h-7',
       'w-7',
@@ -78,7 +75,6 @@ const testCases = [
       'bg-blue',
       'p-1',
       'text-center',
-      '}',
     ],
   },
   { name: 'test13', source: 'className={twTree([ h-7 w-7 ', expected: ['h-7', 'w-7'] },

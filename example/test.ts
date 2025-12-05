@@ -29,8 +29,7 @@ const test4 = "import { Tooltip } from 'antd';";
 const test5 =
   "<Flex align='center' justify='space-between' className={twTree(['bg-white-ff', { hover: 'bg-red-500' }])}>";
 const test6 = '// InputDatePicker.stories.tsx';
-const test7 =
-  "className={twTree(['bg-white-ff', { hover: true? ['bg-red-500'] : ['bg-red-700'] }])}";
+const test7 = "className={twTree(['bg-white-ff', { hover: isTrue? 'bg-red-500' : 'bg-red-700' }])}";
 const test8 = "<Icon name='time' />";
 const test9 = '<Flex className="items-center gap-1 ">';
 const test10 = 'className="bg-white-ff z-10 mt-4 flex-wrap  rounded-t-lg "';
@@ -47,7 +46,7 @@ const test18 = 'case ReportFilterDisplayType.Stage: {';
 const test19 = '[ReportFilterDisplayType.Category]: {';
 
 // 1. Extract classes from a source string
-const extractedClasses = extractTwTree()(test3);
+const extractedClasses = extractTwTree()(test7);
 console.log('Extracted classes:', extractedClasses);
 
 // 2. Run generateTwSafelist to scan all source files & write safelist
