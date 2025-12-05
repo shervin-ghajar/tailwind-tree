@@ -7,6 +7,7 @@ import typescript from '@rollup/plugin-typescript';
 import path from 'path';
 import del from 'rollup-plugin-delete';
 import dts from 'rollup-plugin-dts';
+import strip from 'rollup-plugin-strip';
 
 const alias = pluginAlias({
   entries: [
@@ -31,6 +32,10 @@ export default [
       resolve(),
       commonjs(),
       typescript({ tsconfig: './tsconfig.json', include: ['**/*.ts', '**/*.tsx'] }),
+      strip({
+        include: ['**/*.ts', '**/*.tsx'],
+        functions: ['console.*'],
+      }),
       terser(),
     ],
     treeshake: { moduleSideEffects: false },

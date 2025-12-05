@@ -40,9 +40,14 @@ const test12 =
 const test13 = 'className={twTree([ h-7 w-7 '; // TODO return []
 const test14 =
   'text-primary h-7 w-7 rounded-full border ${false?"bg-red":"bg-blue"} ${card.badgeBgColor} p-1 text-center';
+const test15 = 'aggregation: { column: string; fun: StandardReportFieldAggregateFunction },';
+const test16 = ' : { backgroundColor: colors.primary_light_1 }';
+const test17 = 'information?: { id: string; name?: string };';
+const test18 = 'case ReportFilterDisplayType.Stage: {';
+const test19 = '[ReportFilterDisplayType.Category]: {';
 
 // 1. Extract classes from a source string
-const extractedClasses = extractTwTree()(test7);
+const extractedClasses = extractTwTree()(test1);
 console.log('Extracted classes:', extractedClasses);
 
 // 2. Run generateTwSafelist to scan all source files & write safelist

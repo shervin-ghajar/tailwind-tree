@@ -4,48 +4,52 @@ import { traverse } from '@tailwind-tree/shared/utils/traverse';
 import { twTree } from '@tailwind-tree/shared/utils/twTree';
 
 /**
- * Creates a Tailwind class extractor from source code.
+ * Tailwind class extractor for arbitrary code snippets.
  *
- * - Parses `twTree(...)` calls using AST and extracts nested classes.
- * - Optionally merges class names using the `twMerge` utility.
- * - Falls back to regex scanning for static class="..." attributes.
- *
- * @param options.merge Enables twMerge for deduplication and variant collapsing (default: true)
- * @returns A function that returns a list of unique Tailwind class names from code content.
+ * It supports:
+ *  - twTree(...) calls via AST
+ *  - Nested/prefixed objects (e.g. hover: ['bg-red'])
+ *  - JSX attribute scanning (className={...})
+ *  - Plain class strings
+ *  - Incomplete input lines and fallback recovery
  */
 export function extractTwTree() {
-  const merge = false;
+  const merge = false; // merge disabled for correctness during extraction
+
   return function run(content: string): string[] {
     const out = new Set<string>();
     const trimmed = content.trim();
 
-    // ---------- ❶ Ignore imports, comments ----------
+    /* ──────────────────────────────────────────────────────────────────────────
+     * ❶ Skip trivial or irrelevant lines (imports, comments)
+     * ────────────────────────────────────────────────────────────────────────── */
     if (/^(import|export)/.test(trimmed)) return [];
     if (/^\s*\/\//.test(trimmed)) return [];
 
-    // ---------- ❸ Test5 & Test7: JSX ----------
-    // "<Flex align='center' ... className={twTree(...)}>"
+    /* ──────────────────────────────────────────────────────────────────────────
+     * ❷ JSX Line Handling
+     *    <Flex className="..." /> or className={twTree(...)}
+     *    We extract each attribute value independently and recurse.
+     * ────────────────────────────────────────────────────────────────────────── */
     if (/<[A-Za-z]/.test(trimmed)) {
       const attrs = extractJSXAttributeValues(trimmed);
-      for (const a of attrs) {
-        run(a).forEach((c) => out.add(c));
-      }
+      for (const a of attrs) run(a).forEach((c) => out.add(c));
       return [...out];
     }
 
-    // ---------- ❷ Test3: plain class string ----------
-    // "flex h-full min-w-[332px] ... transition-colors"
+    /* ──────────────────────────────────────────────────────────────────────────
+     * ❸ Plain class strings with no JS syntax
+     *    e.g. "flex p-4 bg-red"
+     *    This covers raw HTML/TW strings or standalone className="text..."
+     * ────────────────────────────────────────────────────────────────────────── */
     if (!/[:=]\s*[\\[{]/.test(trimmed) && !/twTree/.test(trimmed)) {
-      // 1. Extract all quoted class names: "bg-red", 'bg-red', `bg-red`
+      // Extract "quoted" strings first
       for (const m of trimmed.matchAll(/["'`](.*?)["'`]/g)) {
         splitClasses(m[1]).forEach((c) => out.add(c));
       }
 
-      // 2. Extract unquoted naked classnames OUTSIDE ${...}
-      // Remove template expressions first
+      // Remove ${...} template blocks and detect naked classes
       const withoutTemplates = trimmed.replace(/\${[^}]*}/g, '');
-
-      // Split remaining text
       splitClasses(withoutTemplates).forEach((token) => {
         if (isValidClass(token)) out.add(token);
       });
@@ -53,44 +57,87 @@ export function extractTwTree() {
       return [...out];
     }
 
-    // ---------- ❹ Test1: prefix array ----------
-    // hover: ['bg-light-6','color-red'],
+    /* ──────────────────────────────────────────────────────────────────────────
+     * ❹ JS object prefix arrays:
+     *    hover: ['bg-red', 'p-4']
+     * ────────────────────────────────────────────────────────────────────────── */
     if (isPrefixedArray(trimmed)) {
       extractPrefixedArray(trimmed).forEach((c) => out.add(c));
       return [...out];
     }
-    // ---------- ❺ Test7 & Test5: twTree(...) inside any JS ----------
+
+    /* ──────────────────────────────────────────────────────────────────────────
+     * ❺ twTree(...) and general JavaScript handling
+     *
+     *  This covers:
+     *   - twTree([...]) calls
+     *   - twTree({ ... })
+     *   - twTree inside JSX attributes
+     *   - Incomplete code lines (critical!)
+     *
+     *  We try AST parsing when possible.
+     *  If parsing fails, fallback to regex extraction.
+     * ────────────────────────────────────────────────────────────────────────── */
     try {
       let wrapped = '';
-      if (content.startsWith('twTree')) wrapped = safeWrapTwTree(content);
-      else if (content.includes('=')) {
+
+      /* ───── Handle incomplete twTree([ ...   (missing closing ])
+       *  Example: className={twTree([ h-7 w-7
+       *  AST cannot be used → fallback raw extraction of classes inside the array.
+       * ─────────────────────────────────────────────────────────────────────── */
+      if (/twTree\s*\(\s*\[/.test(content) && !content.includes(']')) {
+        const raw = content.replace(/.*twTree\s*\(\s*\[/, '');
+        splitClasses(raw).forEach((c) => out.add(c));
+        return [...out];
+      } else if (content.startsWith('twTree')) {
+        /* ───── Complete twTree(...) call (balanced brackets) ───── */
+        wrapped = safeWrapTwTree(content);
+      } else if (content.includes('=')) {
+        /* ───── JSX-like: something={...} ───── */
         const attrs = extractJSXAttributeValues(trimmed);
+        for (const a of attrs) run(a).forEach((c) => out.add(c));
+      } else {
+        /* ───── Generic expression: wrap as object literal ───── */
+        wrapped = `const __x = { ${content} }`;
+      }
 
-        for (const a of attrs) {
-          run(a).forEach((c) => out.add(c));
-        }
-      } else wrapped = `const __x = { ${content} }`;
-
+      /* ────────────────────────────────────────────────────────
+       * Try AST parsing of the wrapped content
+       * ──────────────────────────────────────────────────────── */
       const ast = parseProgram(wrapped);
-      traverse(ast, (node) => {
-        handleTwTreeCall(node, out, merge);
-        handlePrefixedObject(node, out);
-      });
+
+      if (ast?.program?.body?.length) {
+        traverse(ast, (node) => {
+          handleTwTreeCall(node, out, merge);
+          handlePrefixedObject(node, out);
+        });
+      } else {
+        throw new Error('AST failed');
+      }
     } catch {
-      // fallback if AST fails
+      /* ──────────────────────────────────────────────────────────
+       * If AST parsing explodes (very common for incomplete lines),
+       * fall back to simple regex extraction.
+       * ────────────────────────────────────────────────────────── */
       extractViaRegex(trimmed).forEach((c) => out.add(c));
     }
 
     return [...out];
   };
 }
-/* -------------------------------------------------------------------------- */
+
+/* ============================================================================
+ * Utility helpers
+ * ========================================================================== */
+
 function splitClasses(str: string): string[] {
   return str.split(/\s+/).filter(Boolean);
 }
+
 function isPrefixedArray(content: string): boolean {
   return /^[a-zA-Z0-9_-]+\s*:\s*\[/.test(content);
 }
+
 function extractPrefixedArray(content: string): string[] {
   const m = content.match(/^([a-zA-Z0-9_-]+)\s*:\s*\[(.*)\]/);
   if (!m) return [];
@@ -103,6 +150,12 @@ function extractPrefixedArray(content: string): string[] {
     .filter(Boolean)
     .map((v) => `${prefix}:${v}`);
 }
+
+/**
+ * Handles twTree(...) AST nodes.
+ * Extracts nested classes → flattens via twTree → adds to output.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleTwTreeCall(node: any, out: Set<string>, merge: boolean) {
   if (
     node.type === 'CallExpression' &&
@@ -112,12 +165,18 @@ function handleTwTreeCall(node: any, out: Set<string>, merge: boolean) {
   ) {
     const raw = extractClassesFromNode(node.arguments[0]);
     const flat = twTree(raw, { merge });
+
     flat
       .split(/\s+/)
       .filter(Boolean)
       .forEach((c) => out.add(c));
   }
 }
+
+/**
+ * Handles `{ hover: [...] }` shape objects inside twTree.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handlePrefixedObject(node: any, out: Set<string>) {
   if (node.type !== 'ObjectExpression') return;
 
@@ -125,27 +184,31 @@ function handlePrefixedObject(node: any, out: Set<string>) {
     if (p.type !== 'ObjectProperty' || p.key.type !== 'Identifier') continue;
 
     const key = p.key.name;
-    const values = extractClassesFromNode(p.value); // 👈 recursive extraction
+    const values = extractClassesFromNode(p.value);
 
-    values.forEach((v) => {
-      out.add(`${key}:${v}`);
-    });
+    values.forEach((v) => out.add(`${key}:${v}`));
   }
 }
+
+/**
+ * Removes everything before `=`, strips surrounding quotes.
+ */
 function chopped(str: string) {
-  return str
-    .replace(/^[^=]*=\s*/, '') // remove everything before =
-    .replace(/^["'`]|["'`]$/g, '');
+  return str.replace(/^[^=]*=\s*/, '').replace(/^["'`]|["'`]$/g, '');
 }
+
+/**
+ * Wraps twTree(expr) safely for AST parsing.
+ * Returns empty string for incomplete expressions.
+ */
 function safeWrapTwTree(expr: string): string {
-  // If complete, wrap normally.
-  if (isBalanced(expr)) {
-    return `const __x = ${expr}`;
-  } else {
-    // ⛔ Incomplete: return empty string.
-    return '';
-  }
+  if (isBalanced(expr)) return `const __x = ${expr}`;
+  return ''; // AST must not parse this
 }
+
+/**
+ * Simple balanced-bracket check to detect incomplete JS code.
+ */
 function isBalanced(expr: string): boolean {
   let round = 0,
     square = 0,
@@ -162,26 +225,37 @@ function isBalanced(expr: string): boolean {
 
   return round === 0 && square === 0 && curly === 0;
 }
+
+/**
+ * Valid TW token: letters, numbers, %, /, :, _, -, .
+ */
 function isValidClass(token: string) {
-  // valid class example: bg-red-500, text-primary, w-7, mt-4 etc.
   return /^[a-zA-Z0-9-_:/.%]+$/.test(token);
 }
 
+/**
+ * Fallback: Extract classes from quoted strings only.
+ */
 function extractViaRegex(str: string): string[] {
   const m = str.match(/['"`]([^'"`]*)['"`]/g) || [];
   return m.map((s) => s.replace(/['"`]/g, '')).flatMap((c) => c.split(/\s+/));
 }
 
+/**
+ * Extracts values from JSX attributes:
+ *  - key="value"
+ *  - key={'value'}
+ *  - key={complexExpression}
+ */
 function extractJSXAttributeValues(content: string): string[] {
   const results: string[] = [];
-
   const attrRegex = /([a-zA-Z0-9:_-]+)\s*=\s*/g;
 
   while (attrRegex.exec(content)) {
     const startIndex = attrRegex.lastIndex;
     const firstChar = content[startIndex];
 
-    // --- Case 1: key="value"
+    /* ----- Case 1: key="value" or key='value' ----- */
     if (firstChar === '"' || firstChar === "'") {
       const quote = firstChar;
       let i = startIndex + 1;
@@ -190,7 +264,7 @@ function extractJSXAttributeValues(content: string): string[] {
       continue;
     }
 
-    // --- Case 2: key={complexValue}
+    /* ----- Case 2: key={...} (possibly nested) ----- */
     if (firstChar === '{') {
       let i = startIndex + 1;
       let depth = 1;
