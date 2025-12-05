@@ -1,12 +1,12 @@
 /**
- * Creates a Tailwind class extractor from source code.
+ * Tailwind class extractor for arbitrary code snippets.
  *
- * - Parses `twTree(...)` calls using AST and extracts nested classes.
- * - Optionally merges class names using the `twMerge` utility.
- * - Falls back to regex scanning for static class="..." attributes.
- *
- * @param options.merge Enables twMerge for deduplication and variant collapsing (default: true)
- * @returns A function that returns a list of unique Tailwind class names from code content.
+ * It supports:
+ *  - twTree(...) calls via AST
+ *  - Nested/prefixed objects (e.g. hover: ['bg-red'])
+ *  - JSX attribute scanning (className={...})
+ *  - Plain class strings
+ *  - Incomplete input lines and fallback recovery
  */
 declare function extractTwTree(): (content: string) => string[];
 
