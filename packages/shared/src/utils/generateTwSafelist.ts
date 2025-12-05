@@ -78,8 +78,8 @@ export const collectUsedClasses = (sourceFiles: string[]): Set<string> => {
 };
 
 // Write the safelist as a valid JS module
-export const writeSafelistFile = (classes: string[]) => {
-  const filePath = path.resolve(__dirname, 'safelist.css');
+export const writeSafelistFile = (classes: string[], safelistPath?: string) => {
+  const filePath = safelistPath ?? path.resolve(__dirname, 'safelist.css');
 
   // Flatten classes: split each space-separated string into individual classes
   const flattenedClasses = classes
@@ -98,11 +98,11 @@ export const writeSafelistFile = (classes: string[]) => {
 };
 
 // Main generation function
-export const generateTwSafelist = async () => {
+export const generateTwSafelist = async (filePaths?: string[], safelistPath?: string) => {
   try {
-    const files = getAllSourceFiles(process.cwd());
+    const files = filePaths ?? getAllSourceFiles(process.cwd());
     const classes = await collectUsedClasses(files);
-    writeSafelistFile([...classes]);
+    writeSafelistFile([...classes], safelistPath);
   } catch (error) {
     console.error('❌ Error generating tw-safelist:', error);
     process.exit(1);

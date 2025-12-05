@@ -50,6 +50,7 @@ export function extractTwTree() {
 
       // Remove ${...} template blocks and detect naked classes
       const withoutTemplates = trimmed.replace(/\${[^}]*}/g, '');
+      console.log({ withoutTemplates });
       splitClasses(withoutTemplates).forEach((token) => {
         if (isValidClass(token)) out.add(token);
       });
@@ -230,7 +231,7 @@ function isBalanced(expr: string): boolean {
  * Valid TW token: letters, numbers, %, /, :, _, -, .
  */
 function isValidClass(token: string) {
-  return /^[a-zA-Z0-9-_:/.%]+$/.test(token);
+  return /^[a-zA-Z0-9-_:/.%\\[\]]+$/.test(token);
 }
 
 /**
