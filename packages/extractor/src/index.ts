@@ -25,7 +25,6 @@ export function extractTwTree() {
      * ────────────────────────────────────────────────────────────────────────── */
     if (/^(import|export)/.test(trimmed)) return [];
     if (/^\s*\/\//.test(trimmed)) return [];
-
     /* ──────────────────────────────────────────────────────────────────────────
      * ❷ JSX Line Handling
      *    <Flex className="..." /> or className={twTree(...)}
@@ -79,6 +78,7 @@ export function extractTwTree() {
       // Remove ${...} template blocks and detect naked classes
 
       const withoutTemplates = trimmed.replace(/\${[^}]*}/g, '');
+
       splitClasses(withoutTemplates).forEach((token) => {
         if (isValidClass(token)) out.add(token);
       });
@@ -100,14 +100,13 @@ export function extractTwTree() {
      * ────────────────────────────────────────────────────────────────────────── */
     try {
       let wrapped = '';
-
       /* ───── Handle incomplete twTree([ ...   (missing closing ])
        *  Example: className={twTree([ h-7 w-7
        *  AST cannot be used → fallback raw extraction of classes inside the array.
        * ─────────────────────────────────────────────────────────────────────── */
       if (/twTree\s*\(\s*\[/.test(content) && !content.includes(']')) {
-        const raw = content.replace(/.*twTree\s*\(\s*\[/, '');
-        splitClasses(raw).forEach((c) => out.add(c));
+        const raw = content.replace(/.*twTree\s*\(\s*\[/, '').trim();
+        parseTwTreeArray(raw, out);
         return [...out];
       } else if (content.startsWith('twTree')) {
         /* ───── Complete twTree(...) call (balanced brackets) ───── */
@@ -254,14 +253,20 @@ function isBalanced(expr: string): boolean {
  * Valid TW token: letters, numbers, %, /, :, _, -, .
  */
 function isValidClass(token: string) {
-  // invalid if starts with a JS identifier (colors.primary_light_2)
+  token = token.trim();
+  if (!token) return false;
+
+  // ❌ Reject JavaScript identifiers like `colors.primary_x`
   if (/^[a-zA-Z_$][a-zA-Z0-9_$]*\./.test(token)) return false;
 
-  // invalid if contains parentheses or commas
-  if (/[(),]/.test(token)) return false;
+  // ✔ Match NORMAL tailwind classes (no arbitrary values)
+  const normalClass = /^[a-zA-Z0-9-_:/%]+$/;
 
-  // valid Tailwind-like pattern
-  return /^[a-zA-Z0-9-_:/%\\[\].]+$/.test(token);
+  // ✔ Match arbitrary values: prefix-[anything]
+  // Allowed inside brackets: almost everything except unmatched `]`
+  const arbitraryClass = /^[a-zA-Z0-9-_:]+-\[[^\]]+\]$/;
+
+  return normalClass.test(token) || arbitraryClass.test(token);
 }
 
 /**
@@ -314,4 +319,37 @@ function extractJSXAttributeValues(content: string): string[] {
   }
 
   return results;
+}
+
+function parseTwTreeArray(raw: string, out: Set<string>) {
+  // Match top-level elements (quoted strings or objects)
+  const elements = raw.match(/("[^"]*"|'[^']*'|{[^}]*}|[^,\s]+)/g) || [];
+
+  for (const el of elements) {
+    const trimmedEl = el.trim();
+
+    // Quoted string: "h-7 w-7"
+    if (/^['"`].*['"`]$/.test(trimmedEl)) {
+      splitClasses(trimmedEl.slice(1, -1)).forEach((cls) => out.add(cls));
+    }
+
+    // Object literal: { hover: "text-red bg-pink" }
+    else if (/^{.*}$/.test(trimmedEl)) {
+      // Extract key:value pairs
+      const kvMatches = trimmedEl.match(/([a-zA-Z0-9_-]+)\s*:\s*['"`](.*?)['"`]/g) || [];
+      for (const kv of kvMatches) {
+        const m = kv.match(/([a-zA-Z0-9_-]+)\s*:\s*['"`](.*)['"`]/);
+        if (m) {
+          const prefix = m[1];
+          const body = m[2];
+          splitClasses(body).forEach((cls) => out.add(`${prefix}:${cls}`));
+        }
+      }
+    }
+
+    // Plain unquoted token
+    else {
+      splitClasses(trimmedEl).forEach((cls) => out.add(cls));
+    }
+  }
 }

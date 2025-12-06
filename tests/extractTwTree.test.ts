@@ -111,7 +111,7 @@ const testCases = [
   {
     name: 'test20',
     source: 'className={twTree([ "h-7 w-7", {hover: "text-red bg-pink" } ',
-    expected: [],
+    expected: ['h-7', 'w-7', 'hover:text-red', 'hover:bg-pink'],
   },
 ];
 

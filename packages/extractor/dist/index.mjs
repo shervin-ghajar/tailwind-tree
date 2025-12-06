@@ -17889,8 +17889,8 @@ function extractTwTree() {
              *  AST cannot be used → fallback raw extraction of classes inside the array.
              * ─────────────────────────────────────────────────────────────────────── */
             if (/twTree\s*\(\s*\[/.test(content) && !content.includes(']')) {
-                const raw = content.replace(/.*twTree\s*\(\s*\[/, '');
-                splitClasses(raw).forEach((c) => out.add(c));
+                const raw = content.replace(/.*twTree\s*\(\s*\[/, '').trim();
+                parseTwTreeArray(raw, out);
                 return [...out];
             }
             else if (content.startsWith('twTree')) {
@@ -18028,14 +18028,18 @@ function isBalanced(expr) {
  * Valid TW token: letters, numbers, %, /, :, _, -, .
  */
 function isValidClass(token) {
-    // invalid if starts with a JS identifier (colors.primary_light_2)
+    token = token.trim();
+    if (!token)
+        return false;
+    // ❌ Reject JavaScript identifiers like `colors.primary_x`
     if (/^[a-zA-Z_$][a-zA-Z0-9_$]*\./.test(token))
         return false;
-    // invalid if contains parentheses or commas
-    if (/[(),]/.test(token))
-        return false;
-    // valid Tailwind-like pattern
-    return /^[a-zA-Z0-9-_:/%\\[\].]+$/.test(token);
+    // ✔ Match NORMAL tailwind classes (no arbitrary values)
+    const normalClass = /^[a-zA-Z0-9-_:/%]+$/;
+    // ✔ Match arbitrary values: prefix-[anything]
+    // Allowed inside brackets: almost everything except unmatched `]`
+    const arbitraryClass = /^[a-zA-Z0-9-_:]+-\[[^\]]+\]$/;
+    return normalClass.test(token) || arbitraryClass.test(token);
 }
 /**
  * Fallback: Extract classes from quoted strings only.
@@ -18083,6 +18087,34 @@ function extractJSXAttributeValues(content) {
         }
     }
     return results;
+}
+function parseTwTreeArray(raw, out) {
+    // Match top-level elements (quoted strings or objects)
+    const elements = raw.match(/("[^"]*"|'[^']*'|{[^}]*}|[^,\s]+)/g) || [];
+    for (const el of elements) {
+        const trimmedEl = el.trim();
+        // Quoted string: "h-7 w-7"
+        if (/^['"`].*['"`]$/.test(trimmedEl)) {
+            splitClasses(trimmedEl.slice(1, -1)).forEach((cls) => out.add(cls));
+        }
+        // Object literal: { hover: "text-red bg-pink" }
+        else if (/^{.*}$/.test(trimmedEl)) {
+            // Extract key:value pairs
+            const kvMatches = trimmedEl.match(/([a-zA-Z0-9_-]+)\s*:\s*['"`](.*?)['"`]/g) || [];
+            for (const kv of kvMatches) {
+                const m = kv.match(/([a-zA-Z0-9_-]+)\s*:\s*['"`](.*)['"`]/);
+                if (m) {
+                    const prefix = m[1];
+                    const body = m[2];
+                    splitClasses(body).forEach((cls) => out.add(`${prefix}:${cls}`));
+                }
+            }
+        }
+        // Plain unquoted token
+        else {
+            splitClasses(trimmedEl).forEach((cls) => out.add(cls));
+        }
+    }
 }
 
 export { extractTwTree, isPrefixedString };
