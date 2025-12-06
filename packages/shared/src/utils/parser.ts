@@ -1,21 +1,17 @@
-import jsx from 'acorn-jsx';
-import { LooseParser, parse } from 'acorn-loose';
-import type * as ESTree from 'estree';
+import { parse } from '@babel/parser';
+import type { File } from '@babel/types';
 
-// Patch LooseParser with JSX support
-LooseParser.extend(jsx());
-
-export function parseProgram(code: string, filePath: string): ESTree.Program {
+export function parseProgram(code: string, filePath = ''): File {
   try {
     return parse(code, {
-      ecmaVersion: 'latest',
       sourceType: 'module',
-      allowReturnOutsideFunction: true,
-      allowImportExportEverywhere: true,
-      allowHashBang: true,
-    }) as unknown as ESTree.Program;
-  } catch (error) {
-    console.warn(`[acorn-loose] Failed to parse ${filePath}:`, error);
-    return { type: 'Program', body: [] } as unknown as ESTree.Program;
+      plugins: ['typescript', 'jsx'],
+    });
+  } catch (err) {
+    console.warn(`Parser failed to parse ${filePath}: ${err}`);
+    return {
+      type: 'File',
+      program: { type: 'Program', body: [], sourceType: 'module' },
+    } as unknown as File;
   }
 }

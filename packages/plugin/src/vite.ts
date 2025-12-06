@@ -5,15 +5,11 @@ export function twTreePlugin(): Plugin {
   return {
     name: 'vite-plugin-tailwind-tree',
 
-    handleHotUpdate() {
-      generateTwSafelist();
+    handleHotUpdate({ file }) {
+      generateTwSafelist([file]);
     },
 
     buildStart() {
-      generateTwSafelist();
-    },
-
-    closeBundle() {
       generateTwSafelist();
     },
   };

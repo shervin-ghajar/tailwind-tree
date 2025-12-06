@@ -1,7 +1,7 @@
 {
   "name": "tailwind-tree-monorepo",
   "private": false,
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "A utility for writing deeply nested and composable Tailwind CSS classes using an expressive tree structure, supporting responsive and interactive variants for Tailwind v3 and v4.",
   "author": {
     "name": "Shervin Ghajar",
@@ -24,15 +24,32 @@
   },
   "license": "MIT",
   "type": "module",
+  "exports": {
+    "./tree": {
+      "import": "./packages/tailwind-tree/dist/index.mjs",
+      "require": "./packages/tailwind-tree/dist/index.cjs",
+      "types": "./packages/tailwind-tree/dist/index.d.ts"
+    },
+    "./vite-plugin": {
+      "import": "./packages/plugin/dist/index.mjs",
+      "types": "./packages/plugin/dist/index.d.ts"
+    },
+    "./extractor": {
+      "import": "./packages/extractor/dist/index.mjs",
+      "require": "./packages/extractor/dist/index.cjs",
+      "types": "./packages/extractor/dist/index.d.ts"
+    }
+  },
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
     "format": "prettier --write --cache .  --plugin=prettier-plugin-organize-imports",
     "lint": "eslint .",
-    "test": "npx tsx ./example/test.ts",
+    "example": "npx tsx ./example/test.ts",
     "build:tailwind-tree": "pnpm --filter tailwind-tree run build",
     "build:extractor": "pnpm --filter @tailwind-tree/extractor run build",
     "build:plugin": "pnpm --filter @tailwind-tree/vite-plugin run build",
+    "build:all": "pnpm test && pnpm build:tailwind-tree && pnpm build:extractor && pnpm build:plugin",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -40,6 +57,7 @@
     "@rollup/plugin-alias": "^5.1.1",
     "@rollup/plugin-commonjs": "^28.0.3",
     "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-strip": "3.0.4",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.2",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
@@ -55,12 +73,15 @@
     "rollup-plugin-delete": "^3.0.1",
     "rollup-plugin-dts": "^6.2.1",
     "rollup-plugin-visualizer": "^6.0.3",
+    "ts-node": "^10.9.2",
     "tslib": "^2.8.1",
     "tsx": "^4.20.3",
     "typescript": "~5.8.3",
-    "typescript-eslint": "^8.30.1"
+    "typescript-eslint": "^8.30.1",
+    "vitest": "^4.0.15"
   },
   "files": [
+    "packages",
     "dist",
     "README.md",
     "LICENSE"

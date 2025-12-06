@@ -2,3 +2,5 @@ echo "Running Lint ..."
 pnpm lint
 echo "Running Format ..."
 pnpm format
+echo "Running Tests ..."
+pnpm test

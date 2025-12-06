@@ -11,32 +11,14 @@ const isFocused = true;
 const isError = true;
 const anotherCondition = true;
 twTree([
-  'text-white',
-  isActive ? "bg-green-500" : 'bg-green-300',
-  {
-    ...(isActive
-      ? {
-          hover: [
-            'underline',
-            'opacity-50',
-            isFocused ? 'bg-blue-200' : "bg-blue-100",
-            {
-              active: ['scale-105', "font-semibold"],
-            },
-          ],
-        }
-      : {
-          focus: [
-            'ring-2',
-            {
-              visible: ['ring-green-500', isError && "ring-red-500"],
-            },
-          ],
-        }),
-  },
-  anotherCondition ? 'p-4' : 'p-2',
-  ['font-bold', "tracking-wide"],
-]);
+    'flex h-full min-w-[332px] cursor-pointer items-center rounded-lg p-6 transition-colors',
+    {
+      hover: ['bg-light-6'],
+    },
+    {
+      hover: ['bg-red-500'],
+    },
+  ]);
 `;
 
 // 1. Extract classes from a source string
