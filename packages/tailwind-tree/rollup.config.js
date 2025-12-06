@@ -2,12 +2,12 @@
 import pluginAlias from '@rollup/plugin-alias';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
+import strip from '@rollup/plugin-strip';
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import path from 'path';
 import del from 'rollup-plugin-delete';
 import dts from 'rollup-plugin-dts';
-import strip from '@rollup/plugin-strip';
 
 const alias = pluginAlias({
   entries: [

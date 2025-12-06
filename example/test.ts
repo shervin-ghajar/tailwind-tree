@@ -21,44 +21,8 @@ twTree([
   ]);
 `;
 
-const test1 = "hover: 'bg-negative-light-2 h-[100px]',";
-
-const test3 =
-  'flex h-full min-w-[332px] cursor-pointer items-center rounded-lg p-6 transition-colors';
-const test4 = "import { Tooltip } from 'antd';";
-const test5 =
-  "<Flex align='center' justify='space-between' className={twTree(['bg-white-ff', { hover: 'bg-red-500' }])}>";
-const test6 = '// InputDatePicker.stories.tsx';
-const test7 = "className={twTree(['bg-white-ff', { hover: isTrue? 'bg-red-500' : 'bg-red-700' }])}";
-const test8 = "<Icon name='time' />";
-const test9 = '<Flex className="items-center gap-1 ">';
-const test10 = 'className="bg-white-ff z-10 mt-4 flex-wrap  rounded-t-lg "';
-const test11 = "badgeBorderColor: 'border-positive-light-2',";
-const test12 =
-  'className={`text-primary h-7 w-7 rounded-full border ${false?"bg-red":"bg-blue"} ${card.badgeBgColor} p-1 text-center`}';
-const test13 = 'className={twTree([ h-7 w-7 ';
-const test14 =
-  'text-primary h-7 w-7 rounded-full border ${false?"bg-red":"bg-blue"} ${card.badgeBgColor} p-1 text-center';
-const test15 = 'aggregation: { column: string; fun: StandardReportFieldAggregateFunction },';
-const test16 = ' : { backgroundColor: colors.primary_light_1 }';
-const test17 = 'information?: { id: string; name?: string };';
-const test18 = 'case ReportFilterDisplayType.Stage: {';
-const test19 = '[ReportFilterDisplayType.Category]: {';
-const test20 = '<Text color={colors.primary_light_2} {...textProps}>';
-const test22 = '<View className="h-[calc(100vh-120px)] max-w-[400px] flex-1">';
-const test23 = 'h-[calc(100vh-120px)]';
-const test24 = 'className={twTree([ "h-7 w-7", { hover: "text-red bg-pink" } ';
-const test25 = 'export const popUpOverlayClassNames = twMerge("[&_.ant-popover-inner]:p-0 ");';
-const test26 =
-  'className="[&>*:nth-child(1)]:bg-white-ff [&_.charts-loading-container]:!bg-white-ff flex-1 items-center justify-center"';
-// const test21 = 'className={twTree([ "h-7 w-7", { hover: "text-red bg-pink" } ';
-const test27 =
-  "canvasContainerClassName={`${duration > 0 ? 'h-[15px]' : ' [&_canvas]:!hidden [&_canvas]:!h-[30px] flex items-center [&>svg]:translate-x-0 [&>svg]:translate-y-0 [&_svg]:static [&_svg]:max-w-none'} relative [&>button]:!hidden`}";
-const test28 =
-  " '[&_th]:!border-t h-full [&_.ant-spin-nested-loading]:h-full [&_.ant-spin-container]:h-full [&_.ant-table]:h-full [&_.ant-spin-container]:flex [&_.ant-spin-container]:flex-col [&_.ant-spin-container]:justify-between  [&_.ant-table-column-title]:flex-[0] [&_th]:!border-t-light-7 [&_th]:!pt-4 [&_th]:!pb-1 [&_.ant-table-selection-column]:!ps-4 [&_.ant-table-wrapper]:!p-0 [&_.ant-table-measure-row]:!h-[1px] [&_.ant-table-body]:h-full [&_.ant-table-container]:h-full',";
-const test29 = "twTree(['h-full', { '[&_th]': '!border-t-light-7 !pt-4 !pb-1'}])";
 // 1. Extract classes from a source string
-const extractedClasses = extractTwTree()(test29);
+const extractedClasses = extractTwTree()(exampleSource);
 console.log('Extracted classes:', extractedClasses);
 
 // 2. Run generateTwSafelist to scan all source files & write safelist

@@ -1,4 +1,6 @@
 echo "Running Lint ..."
-# pnpm lint
+pnpm lint
 echo "Running Format ..."
-# pnpm format
+pnpm format
+echo "Running Tests ..."
+pnpm test
