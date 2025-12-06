@@ -20,12 +20,12 @@ export function extractTwTree() {
     const out = new Set<string>();
     const trimmed = content.trim();
     /* ──────────────────────────────────────────────────────────────────────────
-     * ❶ Skip trivial or irrelevant lines (imports, comments)
+     * 1 Skip trivial or irrelevant lines (imports, comments)
      * ────────────────────────────────────────────────────────────────────────── */
     if (/^(import)/.test(trimmed)) return [];
     if (/^\s*\/\//.test(trimmed)) return [];
     /* ──────────────────────────────────────────────────────────────────────────
-     * ❷ JSX Line Handling
+     * 2 JSX Line Handling
      *    <Flex className="..." /> or className={twTree(...)}
      *    We extract each attribute value independently and recurse.
      * ────────────────────────────────────────────────────────────────────────── */
@@ -36,7 +36,7 @@ export function extractTwTree() {
     }
 
     /* ──────────────────────────────────────────────────────────────────────────
-     * ❹ JS object prefix arrays:
+     * 3 JS object prefix arrays:
      *    hover: ['bg-red', 'p-4']
      * ────────────────────────────────────────────────────────────────────────── */
     if (isPrefixedArray(trimmed)) {
@@ -45,7 +45,7 @@ export function extractTwTree() {
     }
 
     /* ──────────────────────────────────────────────────────────────────────────
-     * ❹.5 JS object prefixed strings:
+     * 4  JS object prefixed strings:
      *    hover: "bg-red text-grey"
      *    focus: 'ring-2 ring-green-500'
      *    active: `p-2 text-xl`
@@ -64,7 +64,7 @@ export function extractTwTree() {
     }
 
     /* ──────────────────────────────────────────────────────────────────────────
-     * ❸ Plain class strings with no JS syntax
+     * 5 Plain class strings with no JS syntax
      *    e.g. "flex p-4 bg-red"
      *    This covers raw HTML/TW strings or standalone className="text..."
      * ────────────────────────────────────────────────────────────────────────── */
@@ -73,15 +73,12 @@ export function extractTwTree() {
       for (const m of trimmed.matchAll(/["'`](.*?)["'`]/g)) {
         splitClasses(m[1]).forEach((c) => out.add(c));
       }
-
       // Remove ${...} template blocks and detect naked classes
 
       const withoutTemplates = trimmed.replace(/\${[^}]*}/g, '');
-
       splitClasses(withoutTemplates).forEach((rawToken) => {
         const token = sanitizeToken(rawToken);
         if (!token) return;
-
         // now token will be like '[&_.paperclipOpen]:hidden' (no trailing '">')
         if (isValidClass(token) || isArbitraryVariant(token)) {
           out.add(token);
@@ -94,7 +91,7 @@ export function extractTwTree() {
     }
 
     /* ──────────────────────────────────────────────────────────────────────────
-     * ❺ twTree(...) and general JavaScript handling
+     * 6 twTree(...) and general JavaScript handling
      *
      *  This covers:
      *   - twTree([...]) calls
