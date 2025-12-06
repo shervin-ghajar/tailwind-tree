@@ -44,9 +44,11 @@ const test16 = ' : { backgroundColor: colors.primary_light_1 }';
 const test17 = 'information?: { id: string; name?: string };';
 const test18 = 'case ReportFilterDisplayType.Stage: {';
 const test19 = '[ReportFilterDisplayType.Category]: {';
+const test20 = '<Text color={colors.primary_light_2} {...textProps}>';
+// const test21 = 'className={twTree([ "h-7 w-7", { hover: "text-red bg-pink" } ';
 
 // 1. Extract classes from a source string
-const extractedClasses = extractTwTree()(test1);
+const extractedClasses = extractTwTree()(test20);
 console.log('Extracted classes:', extractedClasses);
 
 // 2. Run generateTwSafelist to scan all source files & write safelist

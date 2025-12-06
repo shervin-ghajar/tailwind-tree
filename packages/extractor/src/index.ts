@@ -120,6 +120,7 @@ export function extractTwTree() {
         /* ───── Generic expression: wrap as object literal ───── */
         wrapped = `const __x = { ${content} }`;
       }
+
       /* ────────────────────────────────────────────────────────
        * Try AST parsing of the wrapped content
        * ──────────────────────────────────────────────────────── */
@@ -253,7 +254,14 @@ function isBalanced(expr: string): boolean {
  * Valid TW token: letters, numbers, %, /, :, _, -, .
  */
 function isValidClass(token: string) {
-  return /^[a-zA-Z0-9-_:/.%\\[\]]+$/.test(token);
+  // invalid if starts with a JS identifier (colors.primary_light_2)
+  if (/^[a-zA-Z_$][a-zA-Z0-9_$]*\./.test(token)) return false;
+
+  // invalid if contains parentheses or commas
+  if (/[(),]/.test(token)) return false;
+
+  // valid Tailwind-like pattern
+  return /^[a-zA-Z0-9-_:/%\\[\].]+$/.test(token);
 }
 
 /**

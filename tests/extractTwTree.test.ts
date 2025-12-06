@@ -62,6 +62,11 @@ const testCases = [
     expected: ['bg-white-ff', 'z-10', 'mt-4', 'flex-wrap', 'rounded-t-lg'],
   },
   {
+    name: 'test11',
+    source: '<Text color={colors.primary_light_2} {...textProps}>',
+    expected: [],
+  },
+  {
     name: 'test12',
     source:
       'className={`text-primary h-7 w-7 rounded-full border ${false?"bg-red":"bg-blue"} ${card.badgeBgColor} p-1 text-center`}',
@@ -103,6 +108,11 @@ const testCases = [
   { name: 'test17', source: 'information?: { id: string; name?: string };', expected: [] },
   { name: 'test18', source: 'case ReportFilterDisplayType.Stage: {', expected: [] },
   { name: 'test19', source: '[ReportFilterDisplayType.Category]: {', expected: [] },
+  {
+    name: 'test20',
+    source: 'className={twTree([ "h-7 w-7", {hover: "text-red bg-pink" } ',
+    expected: [],
+  },
 ];
 
 describe('extractTwTree - all test cases', () => {
