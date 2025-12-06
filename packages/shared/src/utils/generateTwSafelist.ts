@@ -100,9 +100,32 @@ export const writeSafelistFile = (classes: string[], safelistPath?: string) => {
 // Main generation function
 export const generateTwSafelist = async (filePaths?: string[], safelistPath?: string) => {
   try {
+    const filePath = safelistPath ?? path.resolve(__dirname, 'safelist.css');
+
+    // 1. If safelist itself is passed as file, skip
+    if (filePaths?.some((f) => path.resolve(f) === path.resolve(filePath))) return;
+
+    // 2. Get all files or use specific files
     const files = filePaths ?? getAllSourceFiles(process.cwd());
+
+    // 3. Collect used classes
     const classes = await collectUsedClasses(files);
-    writeSafelistFile([...classes], safelistPath);
+    // 4. Merge with existing safelist if file exists
+    let existingClasses: string[] = [];
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, 'utf8');
+      existingClasses = Array.from(
+        new Set(
+          content
+            .match(/@source inline\("([^"]+)"\);/g)
+            ?.map((s) => s.replace(/@source inline\("([^"]+)"\);/, '$1')) || [],
+        ),
+      );
+    }
+
+    const allClasses = Array.from(new Set([...existingClasses, ...classes]));
+
+    writeSafelistFile(allClasses, safelistPath);
   } catch (error) {
     console.error('❌ Error generating tw-safelist:', error);
     process.exit(1);

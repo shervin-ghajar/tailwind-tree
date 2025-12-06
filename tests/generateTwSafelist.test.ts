@@ -7,7 +7,7 @@ import { generateTwSafelist } from '../packages/shared/src/utils/generateTwSafel
 // Temporary test file
 const testFilePath = path.resolve(__dirname, 'twSafelistTestFile.ts');
 const safelistPath = path.resolve(__dirname, 'safelist.css'); // default output
-console.log({ safelistPath });
+
 describe('generateTwSafelist', () => {
   beforeAll(() => {
     // Create a simple test file containing twTree usage
