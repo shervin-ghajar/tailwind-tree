@@ -19,11 +19,10 @@ export function extractTwTree() {
   return function run(content: string): string[] {
     const out = new Set<string>();
     const trimmed = content.trim();
-
     /* ──────────────────────────────────────────────────────────────────────────
      * ❶ Skip trivial or irrelevant lines (imports, comments)
      * ────────────────────────────────────────────────────────────────────────── */
-    if (/^(import|export)/.test(trimmed)) return [];
+    if (/^(import)/.test(trimmed)) return [];
     if (/^\s*\/\//.test(trimmed)) return [];
     /* ──────────────────────────────────────────────────────────────────────────
      * ❷ JSX Line Handling
@@ -79,8 +78,16 @@ export function extractTwTree() {
 
       const withoutTemplates = trimmed.replace(/\${[^}]*}/g, '');
 
-      splitClasses(withoutTemplates).forEach((token) => {
-        if (isValidClass(token)) out.add(token);
+      splitClasses(withoutTemplates).forEach((rawToken) => {
+        const token = sanitizeToken(rawToken);
+        if (!token) return;
+
+        // now token will be like '[&_.paperclipOpen]:hidden' (no trailing '">')
+        if (isValidClass(token) || isArbitraryVariant(token)) {
+          out.add(token);
+        } else if (isPrefixedArray(token)) {
+          run(token);
+        }
       });
 
       return [...out];
@@ -268,6 +275,10 @@ function isValidClass(token: string) {
 
   return normalClass.test(token) || arbitraryClass.test(token);
 }
+
+const isArbitraryVariant = (cls: string) => /^\[[^\]]+\]:.+/.test(cls);
+
+const sanitizeToken = (t: string) => t.trim().replace(/^[<>"'\s]+|[<>"'\\/\s]+$/g, '');
 
 /**
  * Fallback: Extract classes from quoted strings only.

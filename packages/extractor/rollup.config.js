@@ -32,10 +32,10 @@ export default [
       resolve(),
       commonjs(),
       typescript({ tsconfig: './tsconfig.json', include: ['**/*.ts', '**/*.tsx'] }),
-      // strip({
-      //   include: ['**/*.js', '**/*.ts'],
-      // }),
-      // terser(),
+      strip({
+        include: ['**/*.js', '**/*.ts'],
+      }),
+      terser(),
     ],
     treeshake: { moduleSideEffects: false },
   },
