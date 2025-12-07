@@ -10,6 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "jsx": "react-jsx",
     "paths": {
+      "tailwind-tree": ["./packages/tailwind-tree/src/index.ts"],
       "tailwind-tree/*": ["./packages/tailwind-tree/src/*"],
       "@tailwind-tree/shared/*": ["./packages/shared/src/*"],
       "@tailwind-tree/plugin/*": ["./packages/plugin/src/*"],

@@ -27,11 +27,11 @@
 ## 📦 Installation
 
 ```bash
-pnpm add -D tailwind-tree
+pnpm add tailwind-tree
 # or
-npm install -D tailwind-tree
+npm install tailwind-tree
 # or
-yarn add -D tailwind-tree
+yarn add tailwind-tree
 ```
 
 ---
