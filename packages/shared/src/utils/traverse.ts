@@ -1,21 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type * as ESTree from 'estree';
+export function traverse(node: any, visit: (node: any, skip: () => void) => void) {
+  let shouldSkip = false;
+  const skip = () => {
+    shouldSkip = true;
+  };
 
-export function traverse(node: ESTree.Node, visit: (node: ESTree.Node) => void) {
-  visit(node);
-
-  for (const key in node as any) {
+  visit(node, skip);
+  if (shouldSkip) return;
+  const keys = Object.keys(node) as Array<keyof typeof node>;
+  keys.forEach((key) => {
     const value = (node as any)[key];
-    if (!value) continue;
+    if (!value) return;
 
     if (Array.isArray(value)) {
-      for (const child of value) {
-        if (child && typeof child.type === 'string') {
-          traverse(child, visit);
-        }
-      }
+      value.forEach((child) => {
+        if (child && typeof child.type === 'string') traverse(child, visit);
+      });
     } else if (value && typeof value.type === 'string') {
       traverse(value, visit);
     }
-  }
+  });
 }

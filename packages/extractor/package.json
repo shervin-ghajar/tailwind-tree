@@ -1,57 +1,51 @@
 {
   "name": "@tailwind-tree/extractor",
-  "version": "0.1.56",
-  "description": "Tailwind CSS class extractor for twTree() — enables nested class parsing in Tailwind v3 projects.",
-  "author": "Shervin Ghajar <ssghajar.work@gmail.com>",
-  "license": "MIT",
-  "type": "module",
-  "homepage": "https://github.com/shervin-ghajar/tailwind-tree/tree/main/packages/extractor#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/shervin-ghajar/tailwind-tree.git",
-    "directory": "packages/extractor"
+  "private": false,
+  "version": "0.3.0",
+ "description": "A custom extractor enabling tailwind-tree to work seamlessly with Tailwind's JIT engine. See: https://www.npmjs.com/package/tailwind-tree",
+  "author": {
+    "name": "Shervin Ghajar",
+    "email": "ssghajar.work@gmail.com"
   },
+  "homepage": "https://github.com/shervin-ghajar/tailwind-tree#readme",
   "keywords": [
-    "css",
-    "design",
     "tailwindcss",
     "tailwind",
-    "twTree",
-    "extractor",
-    "tailwind-tree",
-    "tailwind-v3",
+    "tailwind-merge",
+    "style",
+    "css",
+    "utility-first",
     "responsive",
-    "utility-first"
+    "design"
   ],
-  "publishConfig": {
-    "access": "public"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shervin-ghajar/tailwind-tree.git"
   },
+  "license": "MIT",
+  "type": "module",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     }
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "format": "prettier --write --cache .  --plugin=prettier-plugin-organize-imports",
+    "lint": "eslint .",
+    "test":"cd src/example && npx tsx test.ts"
+  },
+  "dependencies": {
+    "@tailwind-tree/shared": "workspace:*",
+    "chalk": "^5.4.1"
   },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
-  ],
-  "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "format": "prettier --write --cache . --plugin=prettier-plugin-organize-imports",
-    "lint": "eslint .",
-    "test": "cd src/example && npx tsx test.ts"
-  },
-  "dependencies": {
-    "chalk": "^5.4.1"
-  },
-  "main": "eslint.config.js",
-  "devDependencies": {},
-  "bugs": {
-    "url": "https://github.com/shervin-ghajar/tailwind-tree/issues"
-  }
+  ]
 }
