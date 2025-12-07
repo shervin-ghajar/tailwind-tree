@@ -189,7 +189,7 @@ const testCases = [
 describe('extractTwTree - all test cases', () => {
   testCases.forEach(({ name, source, expected }) => {
     it(`should correctly extract classes for ${name}`, () => {
-      const extracted = extractTwTree()(source);
+      const extracted = extractTwTree(source);
       expect(extracted.sort()).toEqual(expected.sort());
     });
   });
