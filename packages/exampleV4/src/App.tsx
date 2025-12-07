@@ -1,4 +1,4 @@
-import { twTree } from '@tailwind-tree/shared/utils/twTree.ts';
+import { twTree } from 'tailwind-tree';
 
 import Test from './test_1';
 

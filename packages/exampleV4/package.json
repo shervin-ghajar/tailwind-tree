@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tailwind-tree/vite-plugin": "workspace:*",
-    "@tailwind-tree/shared": "workspace:*",   
+    "@tailwind-tree/vite-plugin": "0.2.1",
+    "tailwind-tree": "0.3.4",   
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

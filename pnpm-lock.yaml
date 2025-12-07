@@ -89,11 +89,8 @@ importers:
 
   packages/exampleV4:
     dependencies:
-      '@tailwind-tree/shared':
-        specifier: workspace:*
-        version: link:../shared
       '@tailwind-tree/vite-plugin':
-        specifier: workspace:*
+        specifier: 0.2.1
         version: link:../plugin
       react:
         specifier: ^19.2.0
@@ -101,6 +98,9 @@ importers:
       react-dom:
         specifier: ^19.2.0
         version: 19.2.0(react@19.2.0)
+      tailwind-tree:
+        specifier: 0.3.4
+        version: link:../tailwind-tree
     devDependencies:
       '@eslint/js':
         specifier: ^9.39.1

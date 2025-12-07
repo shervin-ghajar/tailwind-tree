@@ -1,7 +1,7 @@
 {
   "name": "@tailwind-tree/vite-plugin",
   "private": false,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Vite plugin for tailwind-tree. Fully compatible with Tailwind v4 and supports dynamic twTree class generation with zero setup. See: https://www.npmjs.com/package/tailwind-tree",
   "author": {
     "name": "Shervin Ghajar",
