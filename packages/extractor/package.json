@@ -1,7 +1,7 @@
 {
   "name": "@tailwind-tree/extractor",
   "private": false,
-  "version": "0.3.1",
+  "version": "0.3.2",
  "description": "A custom extractor enabling tailwind-tree to work seamlessly with Tailwind's JIT engine. See: https://www.npmjs.com/package/tailwind-tree",
   "author": {
     "name": "Shervin Ghajar",
@@ -29,6 +29,7 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     }

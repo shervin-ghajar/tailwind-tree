@@ -13,7 +13,7 @@
       "tailwind-tree/*": ["./packages/tailwind-tree/src/*"],
       "@tailwind-tree/shared/*": ["./packages/shared/src/*"],
       "@tailwind-tree/plugin/*": ["./packages/plugin/src/*"],
-      "@tailwind-tree/extractor/*": ["./packages/extractor/src/*"],
+      "@tailwind-tree/extractor/*": ["./packages/extractor/src/*"]
     }
   },
   "exclude": ["node_modules", "dist"],
