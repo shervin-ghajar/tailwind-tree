@@ -1,13 +1,18 @@
 {
   "name": "@tailwind-tree/extractor",
   "private": false,
-  "version": "0.3.0",
+  "version": "0.3.1",
  "description": "A custom extractor enabling tailwind-tree to work seamlessly with Tailwind's JIT engine. See: https://www.npmjs.com/package/tailwind-tree",
   "author": {
     "name": "Shervin Ghajar",
     "email": "ssghajar.work@gmail.com"
   },
-  "homepage": "https://github.com/shervin-ghajar/tailwind-tree#readme",
+  "homepage": "https://github.com/shervin-ghajar/tailwind-tree/tree/main/packages/extractor#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shervin-ghajar/tailwind-tree.git",
+    "directory": "packages/extractor"
+  },
   "keywords": [
     "tailwindcss",
     "tailwind",
@@ -18,10 +23,6 @@
     "responsive",
     "design"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/shervin-ghajar/tailwind-tree.git"
-  },
   "license": "MIT",
   "type": "module",
   "module": "dist/index.mjs",
@@ -39,10 +40,7 @@
     "lint": "eslint .",
     "test":"cd src/example && npx tsx test.ts"
   },
-  "dependencies": {
-    "@tailwind-tree/shared": "workspace:*",
-    "chalk": "^5.4.1"
-  },
+  "dependencies": {},
   "files": [
     "dist",
     "README.md",

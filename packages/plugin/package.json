@@ -44,10 +44,7 @@
     "format": "prettier --write --cache .  --plugin=prettier-plugin-organize-imports",
     "lint": "eslint ."
   },
-  "dependencies": {
-    "@tailwind-tree/extractor": "workspace:*",
-    "@tailwind-tree/shared": "workspace:*"
-  },
+  "dependencies": {},
   "devDependencies": {
     "vite": ">=6.0.0"
   },

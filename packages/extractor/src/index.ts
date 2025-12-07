@@ -1,6 +1,6 @@
-import { extractClassesFromNode } from '@tailwind-tree/shared/utils/extractClassesFromNode';
-import { parseProgram } from '@tailwind-tree/shared/utils/parser';
-import { traverse } from '@tailwind-tree/shared/utils/traverse';
+import { extractClassesFromNode } from '../../shared/src/utils/extractClassesFromNode';
+import { parseProgram } from '../../shared/src/utils/parser';
+import { traverse } from '../../shared/src/utils/traverse';
 
 /**
  * Tailwind class extractor for arbitrary code snippets.

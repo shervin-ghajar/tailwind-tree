@@ -145,23 +145,9 @@ importers:
         specifier: npm:rolldown-vite@7.2.5
         version: /rolldown-vite@7.2.5(@types/node@24.10.1)(tsx@4.20.3)
 
-  packages/extractor:
-    dependencies:
-      '@tailwind-tree/shared':
-        specifier: workspace:*
-        version: link:../shared
-      chalk:
-        specifier: ^5.4.1
-        version: 5.4.1
+  packages/extractor: {}
 
   packages/plugin:
-    dependencies:
-      '@tailwind-tree/extractor':
-        specifier: workspace:*
-        version: link:../extractor
-      '@tailwind-tree/shared':
-        specifier: workspace:*
-        version: link:../shared
     devDependencies:
       vite:
         specifier: '>=6.0.0'
@@ -179,11 +165,7 @@ importers:
         specifier: '>=3.0.0'
         version: 3.3.1
 
-  packages/tailwind-tree:
-    dependencies:
-      '@tailwind-tree/shared':
-        specifier: workspace:*
-        version: link:../shared
+  packages/tailwind-tree: {}
 
 packages:
 
@@ -2125,11 +2107,6 @@ packages:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
     dev: true
-
-  /chalk@5.4.1:
-    resolution: {integrity: sha512-zgVZuo2WcZgfUEmsn6eO3kINexW8RAE4maiQ8QNs8CtpPCSyMiYsULR3HQYkm3w8FIA3SberyMJMSldGsW+U3w==}
-    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
-    dev: false
 
   /cliui@8.0.1:
     resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}

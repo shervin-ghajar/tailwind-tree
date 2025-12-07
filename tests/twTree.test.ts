@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { twTree } from '../packages/tailwind-tree/src';
+import { twTree } from '../packages/tailwind-tree/src/index';
 
 describe('twTree', () => {
   it('should handle simple class array', () => {

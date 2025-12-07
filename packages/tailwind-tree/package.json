@@ -1,7 +1,7 @@
 {
   "name": "tailwind-tree",
   "private": false,
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A utility for writing deeply nested and composable Tailwind CSS classes using an expressive tree structure, supporting responsive and interactive variants for Tailwind v3 and v4.",
   "author": {
     "name": "Shervin Ghajar",
@@ -39,9 +39,7 @@
     "format": "prettier --write --cache .  --plugin=prettier-plugin-organize-imports",
     "lint": "eslint ."
   },
-  "dependencies": {
-    "@tailwind-tree/shared": "workspace:*"
-  },
+  "dependencies": {},
   "files": [
     "dist",
     "README.md",
