@@ -184,6 +184,11 @@ const testCases = [
     source: "twTree(['h-full', { '[&_th]': '!border-t-light-7 !pt-4 !pb-1'}])",
     expected: ['h-full', '[&_th]:!border-t-light-7', '[&_th]:!pt-4', '[&_th]:!pb-1'],
   },
+  {
+    name: 'test30',
+    source: "'[&>div:nth-child(odd)]': 'border-light-7 border-b',",
+    expected: ['[&>div:nth-child(odd)]:border-light-7', '[&>div:nth-child(odd)]:border-b'],
+  },
 ];
 
 describe('extractTwTree - all test cases', () => {

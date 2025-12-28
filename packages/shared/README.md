@@ -118,9 +118,10 @@ With the removal of `content.extract` in Tailwind v4, the `tailwind-tree` librar
 
 ```ts
 // vite.config.ts
-import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
-import { twTreePlugin } from 'tailwind-tree/vite'; // <--- import twTreePlugin()
+import react from '@vitejs/plugin-react';
+import { twTreePlugin } from 'tailwind-tree/vite';
+// <--- import twTreePlugin()
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -152,7 +153,7 @@ export default {
   content: [
     {
       files: ['./src/**/*.{ts,tsx,js,jsx}'],
-      extract: extractTwTree(),
+      extract: extractTwTree,
     },
   ],
   theme: {

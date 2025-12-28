@@ -126,7 +126,7 @@ export default {
   content: [
     {
       files: ['./src/**/*.{ts,tsx,js,jsx}'],
-      extract: extractTwTree(),
+      extract: extractTwTree,
     },
   ],
   theme: {

@@ -30,7 +30,6 @@ export function extractTwTree(content: string): string[] {
     for (const a of attrs) extractTwTree(a).forEach((c) => out.add(c));
     return [...out];
   }
-
   /* ──────────────────────────────────────────────────────────────────────────
    * 3 JS object prefix arrays:
    *    hover: ['bg-red', 'p-4']
@@ -39,7 +38,6 @@ export function extractTwTree(content: string): string[] {
     extractPrefixedArray(trimmed).forEach((c) => out.add(c));
     return [...out];
   }
-
   /* ──────────────────────────────────────────────────────────────────────────
    * 4  JS object prefixed strings:
    *    hover: "bg-red text-grey"
@@ -59,8 +57,27 @@ export function extractTwTree(content: string): string[] {
     return [...out];
   }
 
+  /* ──────────────────────────────────────────────────────────
+   * 5 JS object prefixed strings with QUOTED KEYS
+   *    '[&>div:nth-child(odd)]': 'border-light-7 border-b'
+   * ────────────────────────────────────────────────────────── */
+  if (isQuotedPrefixedString(trimmed)) {
+    const m = trimmed.match(/^['"`]([^'"`]+)['"`]\s*:\s*['"`](.*?)['"`]/);
+
+    if (m) {
+      const prefix = m[1];
+      const body = m[2];
+
+      splitClasses(body).forEach((cls) => {
+        if (cls) out.add(`${prefix}:${cls}`);
+      });
+    }
+
+    return [...out];
+  }
+
   /* ──────────────────────────────────────────────────────────────────────────
-   * 5 Plain class strings with no JS syntax
+   * 6 Plain class strings with no JS syntax
    *    e.g. "flex p-4 bg-red"
    *    This covers raw HTML/TW strings or standalone className="text..."
    * ────────────────────────────────────────────────────────────────────────── */
@@ -87,7 +104,7 @@ export function extractTwTree(content: string): string[] {
   }
 
   /* ──────────────────────────────────────────────────────────────────────────
-   * 6 twTree(...) and general JavaScript handling
+   * 7 twTree(...) and general JavaScript handling
    *
    *  This covers:
    *   - twTree([...]) calls
@@ -119,7 +136,6 @@ export function extractTwTree(content: string): string[] {
       /* ───── Generic expression: wrap as object literal ───── */
       wrapped = `const __x = { ${content} }`;
     }
-
     /* ────────────────────────────────────────────────────────
      * Try AST parsing of the wrapped content
      * ──────────────────────────────────────────────────────── */
@@ -160,6 +176,10 @@ export function isPrefixedString(content: string): boolean {
   return /^[a-zA-Z0-9_-]+\s*:\s*['"`]([^"'`]+)['"`],?$/.test(content.trim());
 }
 
+function isQuotedPrefixedString(content: string): boolean {
+  return /^['"`][^'"`]+['"`]\s*:\s*['"`][^'"`]+['"`],?$/.test(content.trim());
+}
+
 function extractPrefixedArray(content: string): string[] {
   const m = content.match(/^([a-zA-Z0-9_-]+)\s*:\s*\[(.*)\]/);
   if (!m) return [];
@@ -198,12 +218,26 @@ function handlePrefixedObject(node: any, out: Set<string>) {
   if (node.type !== 'ObjectExpression') return;
 
   for (const p of node.properties) {
-    if (p.type !== 'ObjectProperty' || p.key.type !== 'Identifier') continue;
+    if (p.type !== 'ObjectProperty') continue;
 
-    const key = p.key.name;
+    let key: string | undefined;
+
+    if (p.key.type === 'Identifier') {
+      key = p.key.name;
+    } else if (p.key.type === 'StringLiteral') {
+      key = p.key.value;
+    }
+
+    if (!key) continue;
+
     const values = extractClassesFromNode(p.value);
 
-    values.forEach((v) => out.add(`${key}:${v}`));
+    values.forEach((v) => {
+      // split space-separated values safely
+      v.split(/\s+/).forEach((cls) => {
+        if (cls) out.add(`${key}:${cls}`);
+      });
+    });
   }
 }
 
