@@ -6,6 +6,7 @@
 
 # Tailwind Tree
 
+[![Hypercommit](https://img.shields.io/badge/Hypercommit-DB2475)](https://hypercommit.com/tailwind-tree)
 [![npm version](https://img.shields.io/npm/v/tailwind-tree.svg)](https://www.npmjs.com/package/tailwind-tree)
 [![downloads](https://img.shields.io/npm/dm/tailwind-tree.svg)](https://www.npmjs.com/package/tailwind-tree)
 [![license](https://img.shields.io/npm/l/tailwind-tree.svg)](LICENSE)
