@@ -23,3 +23,6 @@ safelist.css
 *.sln
 *.sw?
 tw-safelist.js
+.tailwind-tree/
+*.tgz
+!packages/plugin/safelist.css

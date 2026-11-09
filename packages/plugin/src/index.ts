@@ -1,1 +1,1 @@
-export { twTreePlugin } from './vite';
+export { twTreePlugin, type TwTreePluginOptions } from './vite';

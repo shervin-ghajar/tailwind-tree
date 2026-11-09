@@ -1,44 +1,69 @@
-import { readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import {
+  generateTwSafelist,
+  getAllSourceFiles,
+  writeSafelistFile,
+} from '../packages/shared/src/utils/generateTwSafelist';
 
-import { generateTwSafelist } from '../packages/shared/src/utils/generateTwSafelist';
+let root: string;
+beforeEach(() => {
+  root = fs.mkdtempSync(path.join(os.tmpdir(), 'tw-tree-'));
+});
+afterEach(() => {
+  fs.rmSync(root, { recursive: true, force: true });
+});
 
-// Temporary test file
-const testFilePath = path.resolve(__dirname, 'twSafelistTestFile.ts');
-const safelistPath = path.resolve(__dirname, 'safelist.css'); // default output
-
-describe('generateTwSafelist', () => {
-  beforeAll(() => {
-    // Create a simple test file containing twTree usage
-    const content = `
-      import { twTree } from 'tailwind-tree';
-      twTree([
-        'text-white',
-        'bg-green-500',
-        { hover: ['underline', 'opacity-50'] }
-      ]);
-    `;
-    writeFileSync(testFilePath, content, 'utf-8');
+describe('candidate file generation', () => {
+  it('writes complete candidates, replaces removed classes, and skips identical output', () => {
+    const source = path.join(root, 'button.ts');
+    const output = path.join(root, '.tailwind-tree/candidates.txt');
+    fs.writeFileSync(source, `twTree(['p-4', {hover:'bg-red-500'}])`);
+    generateTwSafelist([source], output);
+    expect(fs.readFileSync(output, 'utf8')).toBe('hover:bg-red-500\np-4\n');
+    expect(writeSafelistFile(['p-4', 'hover:bg-red-500'], output)).toBe(false);
+    fs.writeFileSync(source, `twTree([{hover:'bg-blue-500'}])`);
+    generateTwSafelist([source], output);
+    expect(fs.readFileSync(output, 'utf8')).toBe('hover:bg-blue-500\n');
   });
 
-  afterAll(() => {
-    // Clean up
-    unlinkSync(testFilePath);
-    try {
-      unlinkSync(safelistPath);
-    } catch {
-      /* empty */
-    }
+  it('keeps quotes, backslashes, and arbitrary values as plain text', () => {
+    const output = path.join(root, 'candidates.txt');
+    writeSafelistFile(
+      ['p-4', 'p-4', 'hover:before:content-["hello"]', String.raw`before:content-['a\\b']`],
+      output,
+    );
+    expect(fs.readFileSync(output, 'utf8')).toContain('hover:before:content-["hello"]\n');
+    expect(fs.readFileSync(output, 'utf8').match(/p-4/g)).toHaveLength(1);
   });
 
-  it('should generate safelist.css containing extracted classes', async () => {
-    await generateTwSafelist([testFilePath], safelistPath);
+  it('does not follow symlinks or scan dependencies, hidden output, or declarations', () => {
+    for (const dir of ['src', 'src/node_modules', 'src/dist', 'src/.cache'])
+      fs.mkdirSync(path.join(root, dir), { recursive: true });
+    for (const file of [
+      'src/a.tsx',
+      'src/b.mts',
+      'src/c.cts',
+      'src/types.d.ts',
+      'src/node_modules/a.ts',
+      'src/dist/a.ts',
+      'src/.cache/a.ts',
+    ])
+      fs.writeFileSync(path.join(root, file), '');
+    fs.symlinkSync(root, path.join(root, 'src/loop'));
+    expect(getAllSourceFiles([path.join(root, 'src')]).map((file) => path.basename(file))).toEqual([
+      'a.tsx',
+      'b.mts',
+      'c.cts',
+    ]);
+  });
 
-    const output = readFileSync(safelistPath, 'utf-8');
-
-    // Check that expected classes appear in safelist
-    expect(output).toContain('@source inline("hover:underline")');
-    expect(output).toContain('@source inline("hover:opacity-50")');
+  it('fails on unreadable source without replacing the last good output', () => {
+    const output = path.join(root, 'candidates.txt');
+    writeSafelistFile(['p-4'], output);
+    expect(() => generateTwSafelist([path.join(root, 'missing.ts')], output)).toThrow();
+    expect(fs.readFileSync(output, 'utf8')).toBe('p-4\n');
   });
 });

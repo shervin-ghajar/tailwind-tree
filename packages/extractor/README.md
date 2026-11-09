@@ -1,62 +1,66 @@
 # @tailwind-tree/extractor
 
-Tailwind Tree Extractor for Tailwind CSS v3  
-🔍 A custom extractor to make [`tailwind-tree`](https://www.npmjs.com/package/tailwind-tree) work seamlessly with Tailwind's JIT engine.
+Node-only full-file extraction and source generation for Tailwind Tree. Supports Tailwind v3 through `content.transform` and v4 through generated candidate files.
 
----
-
-## ✨ Why Use This?
-
-If you're using [`twTree`](https://www.npmjs.com/package/tailwind-tree) to generate utility classes with variant nesting (like `hover:bg-red-500`, `md:focus:text-blue-600`, etc.), this extractor enables Tailwind v3 to **understand and extract those class names** during build time — without any extra setup.
-
----
-
-## 📦 Installation
-
-```bash
+```sh
+pnpm add tailwind-tree tailwind-merge@^2.6.0
 pnpm add -D @tailwind-tree/extractor
-# or
-yarn add -D @tailwind-tree/extractor
-# or
-npm install -D @tailwind-tree/extractor
 ```
 
----
+The following Tailwind v3 configuration works without a prefix:
 
-## ⚙️ Usage
-
-### 1. Import the Extractor
-
-```ts
-// tailwind.config.js (Tailwind v3)
-import { extractTwTree } from '@tailwind-tree/extractor';
+```js
+// tailwind.config.js
+import { transformTwTree } from '@tailwind-tree/extractor';
 
 export default {
-  content: [
-    {
-      files: ['./src/**/*.{ts,tsx,js,jsx}'],
-      extract: extractTwTree,
+  content: {
+    files: ['./src/**/*.{js,jsx,ts,tsx}'],
+    transform: {
+      js: transformTwTree,
+      jsx: transformTwTree,
+      ts: (source) => transformTwTree(source, 'source.ts'),
+      tsx: transformTwTree,
     },
-  ],
-  theme: {
-    extend: {},
   },
-  plugins: [],
 };
 ```
 
-That's it! Tailwind will now parse `twTree(...)` usage directly and extract all nested classes — including variants — with full accuracy and zero noise.
+Use `content.transform`, not `content.extract`: Tailwind v3 invokes custom extractors one line at a time, losing outer variants. The transform replaces tree inputs and tree-only constants in scan text with complete candidates, preserving ordinary classes, runtime conditions, shared constants, and exported values. Its output is for Tailwind's scanner, not executable JavaScript.
 
----
+## Without a prefix
 
-## 🧠 How It Works
+Leave `prefix` unset in both Tailwind and `twTree`:
 
-This extractor looks for `twTree(...)` function calls in your source code and statically extracts the final Tailwind utility strings from them.
+```ts
+import { twTree } from 'tailwind-tree';
 
-This avoids bloating your final CSS file with unused classes and works even for deep variant chains and conditionals.
+twTree(['p-4', { hover: 'bg-blue-500' }], { version: 3 });
+// p-4 hover:bg-blue-500
+```
 
----
+## With an optional prefix
 
-## 🔗 Related
+Add `prefix: 'tw-'` to the Tailwind config above and match it in `twTree`:
 
-- [`tailwind-tree`](https://www.npmjs.com/package/tailwind-tree): The class composition utility for deeply nested Tailwind variant structures.
+```ts
+import { twTree } from 'tailwind-tree';
+
+twTree(['p-4', { hover: 'bg-blue-500' }], { version: 3, prefix: 'tw-' });
+// tw-p-4 hover:tw-bg-blue-500
+```
+
+Tree leaf strings stay unprefixed. Ordinary markup uses complete classes such as `tw-p-4 hover:tw-bg-blue-500`. Both setups use the same `content.transform` and standard v3 stylesheet directives (`@tailwind base;`, `@tailwind components;`, `@tailwind utilities;`).
+
+## Generated files and other exports
+
+Additional exports:
+
+- `extractTwTree(source, filename?)`: sorted candidates from a complete JS/TS file. Supports import aliases, local constants, spreads, conditionals, and TS wrappers. Unsupported runtime expressions throw with a filename and location.
+- `generateTwSafelist(files?, output?)`: replaces a plain-text candidate file. Defaults to scanning `./src` and writing `.tailwind-tree/candidates.txt`.
+- `collectUsedClasses(files)`: candidates as a set.
+- `writeSafelistFile(classes, output?)`: sorted, deduplicated, atomic output; returns whether content changed.
+
+For v4 CLI/PostCSS, run the generator before your build and register its output with `@source '../.tailwind-tree/candidates.txt';` relative to the stylesheet. For v3, include the output in `content.files`.
+
+This package does not execute user code, resolve imported tree values, or support line fragments. See the [main documentation](https://github.com/shervin-ghajar/tailwind-tree#readme) for the extraction contract, prefix options, and migration instructions.

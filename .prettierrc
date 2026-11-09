@@ -3,10 +3,7 @@
   "singleQuote": true,
   "endOfLine": "auto",
   "printWidth": 100,
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true,
-  "importOrder": [".css$", "<THIRD_PARTY_MODULES>", "^[./]"],
-  "plugins": ["@trivago/prettier-plugin-sort-imports"],
+  "plugins": ["prettier-plugin-organize-imports"],
   "overrides": [
     {
       "files": ["*.json5"],

@@ -1,5 +1,9 @@
 {
   "extends": "../../tsconfig.json",
-  "exclude": ["node_modules", "dist"],
-  "include": ["src/**/*", "test.js", "src/example/test.ts"]
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": false
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

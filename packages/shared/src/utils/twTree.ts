@@ -1,58 +1,85 @@
-import { twMerge } from 'tailwind-merge';
+/** Common built-in variants; custom variants and breakpoints remain valid object keys. */
+export type TreeVariant =
+  | 'sm'
+  | 'md'
+  | 'lg'
+  | 'xl'
+  | '2xl'
+  | 'hover'
+  | 'focus'
+  | 'focus-visible'
+  | 'focus-within'
+  | 'active'
+  | 'visited'
+  | 'disabled'
+  | 'enabled'
+  | 'checked'
+  | 'required'
+  | 'invalid'
+  | 'first'
+  | 'last'
+  | 'odd'
+  | 'even'
+  | 'dark'
+  | 'group-hover'
+  | 'group-focus'
+  | 'peer-checked'
+  | 'before'
+  | 'after'
+  | 'motion-safe'
+  | 'motion-reduce'
+  | 'ltr'
+  | 'rtl'
+  | 'print';
 
-/**
- * Parses a nested Tailwind class structure and returns a flattened string of classes
- * with variants applied, e.g., `hover:bg-red-500`, `md:focus:text-blue-600`.
- *
- * Supports nested variant objects like:
- * ```ts
- * twTree([
- *   "bg-red-500 text-white",
- *   { hover: ["bg-blue-500"], md: [{ focus: ["text-xl"] }] }
- * ]);
- * // => "bg-red-500 text-white hover:bg-blue-500 md:focus:text-xl"
- * ```
- *
- * @param input - Array of Tailwind class strings or nested variant objects.
- *                Objects can nest arbitrarily deep to represent variant chains.
- * @param options.prefix - Internal use for recursive variant prefixing (e.g., `hover:`).
- * @param options.merge - When true (default), merges and deduplicates classes using `tailwind-merge`.
- *                        When false, returns all classes without merging (useful for extraction/safelist).
- * @returns A space-separated string of Tailwind classes with prefixes applied.
- */
-export function twTree<T extends string | object>(
-  input: T[],
-  options: { prefix?: string; merge?: boolean } = { prefix: '', merge: true },
-): string {
-  const classes: string[] = [];
+export interface TreeVariants extends Readonly<Partial<Record<TreeVariant, TreeValue>>> {
+  readonly [variant: string]: TreeValue;
+}
+
+export type TreeValue = string | false | null | undefined | readonly TreeValue[] | TreeVariants;
+
+export interface TreeOptions {
+  /** Tailwind namespace: `tw-` for v3, `tw` (or `tw:`) for v4. */
+  prefix?: string;
+  version?: 3 | 4;
+  /** Skip static extraction when complete candidates are supplied through another Tailwind source. */
+  extract?: boolean;
+}
+
+export function prefixClass(token: string, variants: string, options: TreeOptions): string {
   const prefix = options.prefix ?? '';
-  input.forEach((item) => {
-    if (typeof item === 'string') {
-      const tokens = item.trim().split(/\s+/);
-      tokens.forEach((token) => {
-        const full = prefix + token;
-        classes.push(full);
-      });
-    } else if (typeof item === 'object' && item !== null) {
-      const keys = Object.keys(item) as Array<keyof typeof item & string>;
-      keys.forEach((variant) => {
-        const nestedClasses = item[variant];
-        if (Array.isArray(nestedClasses)) {
-          const nested = twTree(nestedClasses, {
-            prefix: prefix ? `${prefix}${variant}:` : `${variant}:`,
-            merge: options.merge,
-          });
-          classes.push(...nested.split(/\s+/));
-        } else if (typeof nestedClasses === 'string' || typeof nestedClasses === 'object') {
-          const nested = twTree([nestedClasses as T], {
-            prefix: prefix ? `${prefix}${variant}:` : `${variant}:`,
-            merge: options.merge,
-          });
-          classes.push(...nested.split(/\s+/));
-        }
-      });
-    }
-  });
+  if (!prefix) return variants + token;
+  if (options.version !== 3) return `${prefix.replace(/:$/, '')}:${variants}${token}`;
+  let depth = 0;
+  let lastVariant = -1;
+  for (let index = 0; index < token.length; index++) {
+    if (token[index] === '[' || token[index] === '(') depth++;
+    else if (token[index] === ']' || token[index] === ')') depth--;
+    else if (token[index] === ':' && depth === 0) lastVariant = index;
+  }
+  variants += token.slice(0, lastVariant + 1);
+  token = token.slice(lastVariant + 1);
+  const important = token.startsWith('!') ? '!' : '';
+  const utility = important ? token.slice(1) : token;
+  const negative = utility.startsWith('-') ? '-' : '';
+  return `${variants}${important}${negative}${prefix}${negative ? utility.slice(1) : utility}`;
+}
 
-  return options.merge ? twMerge(classes.join(' ')) : classes.join(' ');
+/** Flatten first, then merge once at the public entrypoint. */
+export function twTree(input: readonly TreeValue[], options: TreeOptions = {}): string {
+  const classes: string[] = [];
+  function collect(value: TreeValue, variants: string) {
+    if (typeof value === 'string') {
+      for (const token of value.split(/\s+/)) {
+        if (token) classes.push(prefixClass(token, variants, options));
+      }
+    } else if (Array.isArray(value)) {
+      for (const child of value) collect(child, variants);
+    } else if (value && typeof value === 'object') {
+      for (const [variant, child] of Object.entries(value))
+        collect(child, `${variants}${variant}:`);
+    }
+  }
+  collect(input, '');
+  return classes.join(' ');
 }

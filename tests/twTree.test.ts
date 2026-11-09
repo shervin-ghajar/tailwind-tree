@@ -92,19 +92,19 @@ describe('twTree', () => {
     expect(result).toContain('tracking-wide');
   });
 
-  it('should merge conflicting classes when merge: false', () => {
+  it('should preserve conflicting classes when merge: false', () => {
     const result = twTree(['bg-red-500', 'bg-blue-500', 'text-white', 'text-black'], {
       merge: false,
     });
 
-    // With twMerge, the **last class in conflict wins**
+    // Disabling merging preserves every candidate.
     expect(result).toContain('bg-blue-500');
     expect(result).toContain('bg-red-500');
     expect(result).toContain('text-black');
     expect(result).toContain('text-white');
   });
 
-  it('should merge pseudo-classes correctly when merge: false', () => {
+  it('should merge pseudo-classes correctly when merge: true', () => {
     const result = twTree(
       [
         {
@@ -120,5 +120,52 @@ describe('twTree', () => {
     expect(result).not.toContain('hover:bg-red-500');
     expect(result).toContain('focus:ring-4');
     expect(result).not.toContain('focus:ring-2');
+  });
+});
+
+describe('runtime regressions', () => {
+  it('flattens nested readonly arrays and filters empty and conditional values', () => {
+    expect(
+      twTree(
+        [
+          ['font-bold', ['tracking-wide']],
+          null,
+          undefined,
+          false,
+          '',
+          { hover: ['', false, 'underline'] },
+        ],
+        { merge: false },
+      ),
+    ).toBe('font-bold tracking-wide hover:underline');
+  });
+
+  it('keeps merging enabled when an options object is supplied', () => {
+    expect(twTree(['p-2', 'p-4'], {})).toBe('p-4');
+    expect(twTree(['p-2', 'p-4'], { prefix: '' })).toBe('p-4');
+  });
+
+  it('places v3 prefixes after variants and important/negative modifiers', () => {
+    expect(
+      twTree([{ hover: '!p-4 -mt-2' }, 'focus:p-2', '[&:nth-child(2)]:p-3'], {
+        prefix: 'tw-',
+        version: 3,
+        merge: false,
+      }),
+    ).toBe('hover:!tw-p-4 hover:-tw-mt-2 focus:tw-p-2 [&:nth-child(2)]:tw-p-3');
+  });
+
+  it('places v4 prefixes before every variant and merges prefixed conflicts', () => {
+    expect(twTree([{ hover: 'p-2 p-4' }, { md: { focus: 'flex!' } }], { prefix: 'tw' })).toBe(
+      'tw:hover:p-4 tw:md:focus:flex!',
+    );
+    expect(twTree(['p-2', 'p-4'], { prefix: 'other:' })).toBe('other:p-4');
+    expect(twTree(['p-2', 'p-4'], { prefix: 'tw' })).toBe('tw:p-4');
+  });
+
+  it('accepts an application-configured merger', () => {
+    expect(twTree(['p-4', { hover: 'underline' }], { merge: (value) => `custom:${value}` })).toBe(
+      'custom:p-4 hover:underline',
+    );
   });
 });

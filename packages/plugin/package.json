@@ -2,7 +2,7 @@
   "name": "@tailwind-tree/vite-plugin",
   "private": false,
   "version": "0.2.2",
-  "description": "Vite plugin for tailwind-tree. Fully compatible with Tailwind v4 and supports dynamic twTree class generation with zero setup. See: https://www.npmjs.com/package/tailwind-tree",
+  "description": "Vite integration for statically extracted tailwind-tree candidates with Tailwind CSS v4.",
   "author": {
     "name": "Shervin Ghajar",
     "email": "ssghajar.work@gmail.com"
@@ -20,7 +20,7 @@
     "vite",
     "plugin"
   ],
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
   "type": "module",
   "repository": {
     "type": "git",
@@ -31,29 +31,44 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     },
-    "./safelist": "./dist/safelist.css"
+    "./safelist": "./safelist.css"
   },
-  "style": "dist/safelist.css",
+  "style": "safelist.css",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "format": "prettier --write --cache .  --plugin=prettier-plugin-organize-imports",
     "lint": "eslint ."
   },
-  "dependencies": {},
+  "dependencies": {
+    "@babel/parser": "^7.29.13",
+    "@babel/traverse": "^7.29.13"
+  },
   "devDependencies": {
-    "vite": ">=6.0.0"
+    "vite": "^6.4.1"
   },
   "peerDependencies": {
-    "vite": ">=6.0.0"
+    "vite": "^6.0.0 || ^7.0.0 || ^8.0.0"
   },
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
-  ]
+    "LICENSE",
+    "safelist.css"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "engines": {
+    "node": ">=20.19.0"
+  }
 }

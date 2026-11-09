@@ -2,7 +2,7 @@
   "name": "@tailwind-tree/extractor",
   "private": false,
   "version": "0.3.4",
- "description": "A custom extractor enabling tailwind-tree to work seamlessly with Tailwind's JIT engine. See: https://www.npmjs.com/package/tailwind-tree",
+  "description": "A custom extractor enabling tailwind-tree to work seamlessly with Tailwind's JIT engine. See: https://www.npmjs.com/package/tailwind-tree",
   "author": {
     "name": "Shervin Ghajar",
     "email": "ssghajar.work@gmail.com"
@@ -29,22 +29,34 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "format": "prettier --write --cache .  --plugin=prettier-plugin-organize-imports",
-    "lint": "eslint .",
-    "test":"cd src/example && npx tsx test.ts"
+    "lint": "eslint ."
   },
-  "dependencies": {},
+  "dependencies": {
+    "@babel/parser": "^7.29.13",
+    "@babel/traverse": "^7.29.13"
+  },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
-  ]
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "main": "dist/index.cjs"
 }

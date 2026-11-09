@@ -1,17 +1,14 @@
 import { parse } from '@babel/parser';
-import type { File } from '@babel/types';
 
-export function parseProgram(code: string, filePath = ''): File {
+export function parseProgram(code: string, filePath = 'source.tsx') {
   try {
     return parse(code, {
-      sourceType: 'module',
-      plugins: ['typescript', 'jsx'],
+      sourceType: 'unambiguous',
+      plugins: /\.[cm]?ts$/.test(filePath) ? ['typescript'] : ['typescript', 'jsx'],
     });
-  } catch (err) {
-    console.warn(`Parser failed to parse ${filePath}: ${err}`);
-    return {
-      type: 'File',
-      program: { type: 'Program', body: [], sourceType: 'module' },
-    } as unknown as File;
+  } catch (error) {
+    throw new Error(`tailwind-tree: Cannot parse ${filePath}: ${(error as Error).message}`, {
+      cause: error,
+    });
   }
 }

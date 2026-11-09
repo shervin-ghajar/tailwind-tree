@@ -1,0 +1,20 @@
+name: Validate library
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22, 24]
+    env:
+      HUSKY: "0"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/setup@v3
+        with:
+          runtime: node@${{ matrix.node }}
+          require-lockfile: true
+          cache: true
+      - run: pnpm build:all

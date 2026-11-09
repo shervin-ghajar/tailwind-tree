@@ -2,3 +2,5 @@ dist/
 pnpm-lock.yaml
 package.json
 example\test.ts
+**/dist/**
+**/.tailwind-tree/**
